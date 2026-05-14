@@ -6,6 +6,7 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\Digi
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.AssemblyInfoInputs.cache
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.AssemblyInfo.cs
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.csproj.CoreCompileInputs.cache
+C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.sourcelink.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.dll
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\refint\DigitalCollege.DAL.dll
 C:\VScode\Digital_College-course-work-\DigitalCollege.DAL\obj\Debug\net10.0\DigitalCollege.DAL.pdb

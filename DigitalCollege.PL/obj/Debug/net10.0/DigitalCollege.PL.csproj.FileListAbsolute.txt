@@ -176,6 +176,7 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\Digit
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\DigitalCollege.PL.csproj.CoreCompileInputs.cache
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\DigitalCollege.PL.MvcApplicationPartsAssemblyInfo.cs
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\DigitalCollege.PL.MvcApplicationPartsAssemblyInfo.cache
+C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\DigitalCollege.PL.sourcelink.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\rjimswa.dswa.cache.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.PL\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json

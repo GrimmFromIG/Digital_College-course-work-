@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DigitalCollege.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f6a7b66ab44194b81b8c58f8b8f6932fc97d630")]
 [assembly: System.Reflection.AssemblyProductAttribute("DigitalCollege.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DigitalCollege.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
