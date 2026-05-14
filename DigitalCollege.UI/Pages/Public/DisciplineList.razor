@@ -1,0 +1,47 @@
+@page "/public/disciplines"
+@inject ApiClient ApiClient
+
+<h1>Дисципліни кафедри</h1>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @onkeyup="LoadDisciplines" placeholder="Пошук дисципліни..." />
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" @bind="SortBy" @bind:after="LoadDisciplines">
+            <option value="">А - Я</option>
+            <option value="name_desc">Я - А</option>
+        </select>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Викладач</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in disciplines ?? new())
+        {
+            <tr>
+                <td>@d.Name</td>
+                <td>@d.TeacherName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<DisciplineModel> disciplines;
+    private string SearchTerm = "";
+    private string SortBy = "";
+
+    protected override async Task OnInitializedAsync() => await LoadDisciplines();
+
+    private async Task LoadDisciplines()
+    {
+        disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy);
+    }
+}

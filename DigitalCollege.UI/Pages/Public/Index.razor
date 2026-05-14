@@ -1,0 +1,32 @@
+﻿@page "/public"
+@inject AuthService AuthService
+
+<PageTitle>Інформація про кафедру</PageTitle>
+
+<div class="container mt-4">
+    <div class="jumbotron shadow-sm p-5 mb-4 bg-light rounded">
+        <h1 class="display-4">Ласкаво просимо!</h1>
+        <p class="lead">Це публічна сторінка нашої кафедри. Тут ви можете знайти загальну інформацію.</p>
+        <hr class="my-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Викладачі</h5>
+                        <p class="card-text">Перегляньте список науково-педагогічного складу нашої кафедри.</p>
+                        <a href="public/teachers" class="btn btn-outline-primary">Список викладачів</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Дисципліни</h5>
+                        <p class="card-text">Перелік навчальних предметів, які викладаються на кафедрі.</p>
+                        <a href="public/disciplines" class="btn btn-outline-primary">Список дисциплін</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

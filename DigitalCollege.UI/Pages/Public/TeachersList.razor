@@ -1,0 +1,43 @@
+@page "/public/teachers"
+@inject ApiClient ApiClient
+
+<h1>Наші викладачі</h1>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @onkeyup="LoadTeachers" placeholder="Пошук викладача..." />
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" @bind="SortBy" @bind:after="LoadTeachers">
+            <option value="">А - Я</option>
+            <option value="name_desc">Я - А</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var teacher in teachers ?? new())
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@teacher.FullName</h5>
+                    <p class="card-text text-muted">ID: @teacher.Id</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<TeacherModel> teachers;
+    private string SearchTerm = "";
+    private string SortBy = "";
+
+    protected override async Task OnInitializedAsync() => await LoadTeachers();
+
+    private async Task LoadTeachers()
+    {
+        teachers = await ApiClient.GetTeachersAsync(SearchTerm, SortBy);
+    }
+}

@@ -1,0 +1,43 @@
+@inherits LayoutComponentBase
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+@implements IDisposable
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <div>
+                @if (AuthService.IsAuthenticated)
+                {
+                    <span class="me-3">Вітаємо, <strong>@AuthService.CurrentUser.FullName</strong> (@AuthService.CurrentUser.Role)</span>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="Logout">Вийти</button>
+                }
+                else
+                {
+                    <a href="login" class="btn btn-sm btn-primary">Увійти</a>
+                }
+            </div>
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    protected override void OnInitialized() => AuthService.OnChange += StateHasChanged;
+
+    private void Logout()
+    {
+        AuthService.Logout();
+        NavManager.NavigateTo("login");
+    }
+
+    public void Dispose() => AuthService.OnChange -= StateHasChanged;
+}

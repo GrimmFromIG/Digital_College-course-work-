@@ -1,0 +1,6 @@
+@DigitalCollege.PL_HostAddress = http://localhost:5008
+
+GET {{DigitalCollege.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

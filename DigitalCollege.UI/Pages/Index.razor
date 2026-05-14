@@ -1,0 +1,29 @@
+@page "/"
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<PageTitle>Головна - Е-Кафедра</PageTitle>
+
+<div class="text-center mt-5">
+    @if (!AuthService.IsAuthenticated)
+    {
+        <h1>Електронна Кафедра</h1>
+        <p class="text-muted">Для доступу до функцій керування та оцінювання, будь ласка, авторизуйтесь.</p>
+        <div class="mt-4">
+            <button class="btn btn-primary btn-lg px-5" @onclick='() => NavManager.NavigateTo("login")'>Увійти</button>
+            <button class="btn btn-link" @onclick='() => NavManager.NavigateTo("public")'>Продовжити як гість</button>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+            <div class="card-body">
+                <h2 class="mb-3">Вітаємо, @AuthService.CurrentUser.FullName!</h2>
+                <div class="alert alert-info">
+                    Ваша роль у системі: <strong>@AuthService.CurrentUser.Role</strong>
+                </div>
+                <p>Використовуйте бокову панель для навігації між розділами.</p>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,84 @@
+@page "/manager/students"
+@inject ApiClient ApiClient
+
+<h1>Керування студентами</h1>
+
+<div class="card p-3 mb-4">
+    <h4>@(isEditMode ? "Редагувати студента" : "Додати студента")</h4>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" @bind="currentStudent.FullName" placeholder="ПІБ" />
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" @bind="currentStudent.GroupId" placeholder="ID групи" />
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100" @onclick="SaveStudent">Зберегти</button>
+            @if (isEditMode) { <button class="btn btn-link" @onclick="CancelEdit">Скасувати</button> }
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-5">
+        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @bind:after="LoadStudents" placeholder="Пошук..." />
+    </div>
+    <div class="col-md-3">
+        <input type="number" class="form-control" @bind="FilterGroupId" @bind:after="LoadStudents" placeholder="Група..." />
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" @bind="SortBy" @bind:after="LoadStudents">
+            <option value="">А - Я</option>
+            <option value="name_desc">Я - А</option>
+        </select>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ПІБ</th>
+            <th>Група</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in students ?? new())
+        {
+            <tr>
+                <td>@s.Id</td>
+                <td>@s.FullName</td>
+                <td>@s.GroupId</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => EditStudent(s)">Змінити</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteStudent(s.Id)">Видалити</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<StudentModel> students;
+    private StudentModel currentStudent = new();
+    private bool isEditMode = false;
+    private string SearchTerm = "";
+    private int? FilterGroupId;
+    private string SortBy = "";
+
+    protected override async Task OnInitializedAsync() => await LoadStudents();
+    private async Task LoadStudents() => students = await ApiClient.GetStudentsAsync(SearchTerm, FilterGroupId, SortBy);
+
+    private async Task SaveStudent()
+    {
+        if (isEditMode) await ApiClient.UpdateStudentAsync(currentStudent);
+        else await ApiClient.AddStudentAsync(currentStudent);
+        CancelEdit();
+        await LoadStudents();
+    }
+
+    private void EditStudent(StudentModel s) { currentStudent = new() { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId }; isEditMode = true; }
+    private void CancelEdit() { currentStudent = new(); isEditMode = false; }
+    private async Task DeleteStudent(int id) { await ApiClient.DeleteStudentAsync(id); await LoadStudents(); }
+}

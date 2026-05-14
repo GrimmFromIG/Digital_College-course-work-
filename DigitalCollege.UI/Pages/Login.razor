@@ -1,0 +1,44 @@
+@page "/login"
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Вхід у систему</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Оберіть роль для тестування системи:</p>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" @onclick='() => DoLogin("Manager", 1, "Адмін Менеджер")'>
+                            Увійти як Менеджер
+                        </button>
+                        
+                        <button class="btn btn-outline-success" @onclick='() => DoLogin("Teacher", 1, "Олександр Петрович")'>
+                            Увійти як Викладач (ID: 1)
+                        </button>
+
+                        <button class="btn btn-outline-info" @onclick='() => DoLogin("Student", 1, "Богдан Петрощук")'>
+                            Увійти як Студент (ID: 1)
+                        </button>
+
+                        <button class="btn btn-outline-secondary" @onclick='() => DoLogin("Unregistered", 0, "Гість")'>
+                            Продовжити як Гість
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void DoLogin(string role, int id, string name)
+    {
+        AuthService.Login(role, id, name);
+        NavManager.NavigateTo("/");
+    }
+}

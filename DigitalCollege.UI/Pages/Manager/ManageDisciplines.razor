@@ -1,0 +1,80 @@
+@page "/manager/disciplines"
+@inject ApiClient ApiClient
+
+<h1>Керування дисциплінами</h1>
+
+<div class="card p-3 mb-4">
+    <h4>@(isEditMode ? "Редагувати дисципліну" : "Додати дисципліну")</h4>
+    <div class="row g-3">
+        <div class="col-md-5">
+            <input type="text" class="form-control" @bind="currentDiscipline.Name" placeholder="Назва дисципліни" />
+        </div>
+        <div class="col-md-4">
+            <input type="number" class="form-control" @bind="currentDiscipline.TeacherId" placeholder="ID викладача" />
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-primary w-100" @onclick="SaveDiscipline">Зберегти</button>
+            @if (isEditMode) { <button class="btn btn-link" @onclick="CancelEdit">Скасувати</button> }
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @bind:after="LoadDisciplines" placeholder="Пошук..." />
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" @bind="SortBy" @bind:after="LoadDisciplines">
+            <option value="">А - Я</option>
+            <option value="name_desc">Я - А</option>
+        </select>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>ID Викладача</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in disciplines ?? new())
+        {
+            <tr>
+                <td>@d.Id</td>
+                <td>@d.Name</td>
+                <td>@d.TeacherId</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => EditDiscipline(d)">Змінити</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteDiscipline(d.Id)">Видалити</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<DisciplineModel> disciplines;
+    private DisciplineModel currentDiscipline = new();
+    private bool isEditMode = false;
+    private string SearchTerm = "";
+    private string SortBy = "";
+
+    protected override async Task OnInitializedAsync() => await LoadDisciplines();
+    private async Task LoadDisciplines() => disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy);
+
+    private async Task SaveDiscipline()
+    {
+        if (isEditMode) await ApiClient.UpdateDisciplineAsync(currentDiscipline);
+        else await ApiClient.AddDisciplineAsync(currentDiscipline);
+        CancelEdit();
+        await LoadDisciplines();
+    }
+
+    private void EditDiscipline(DisciplineModel d) { currentDiscipline = new() { Id = d.Id, Name = d.Name, TeacherId = d.TeacherId }; isEditMode = true; }
+    private void CancelEdit() { currentDiscipline = new(); isEditMode = false; }
+    private async Task DeleteDiscipline(int id) { await ApiClient.DeleteDisciplineAsync(id); await LoadDisciplines(); }
+}

@@ -1,0 +1,60 @@
+@page "/teacher/grade"
+@inject ApiClient ApiClient
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<PageTitle>Виставлення оцінок</PageTitle>
+
+@if (!AuthService.IsInRole("Teacher"))
+{
+    <div class="alert alert-danger">Доступ заборонено. Ця сторінка лише для викладачів.</div>
+}
+else
+{
+    <h1>Журнал викладача: @AuthService.CurrentUser.FullName</h1>
+
+    <div class="card p-3 mb-4 shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">ID Студента</label>
+                <input type="number" class="form-control" @bind="newGrade.StudentId" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">ID Дисципліни</label>
+                <input type="number" class="form-control" @bind="newGrade.DisciplineId" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Оцінка</label>
+                <input type="number" class="form-control" @bind="newGrade.Value" />
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button class="btn btn-success w-100" @onclick="SubmitGrade">Поставити оцінку</button>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+}
+
+@code {
+    private CreateGradeModel newGrade = new();
+    private string message = "";
+
+    private async Task SubmitGrade()
+    {
+        try
+        {
+            newGrade.TeacherId = AuthService.CurrentUser.Id;
+            await ApiClient.AssignGradeAsync(newGrade);
+            message = "Оцінку успішно виставлено!";
+            newGrade = new CreateGradeModel();
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка: {ex.Message}";
+        }
+    }
+}

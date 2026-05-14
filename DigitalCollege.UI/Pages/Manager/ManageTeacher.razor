@@ -1,0 +1,75 @@
+@page "/manager/teachers"
+@inject ApiClient ApiClient
+@inject AuthService AuthService
+
+<PageTitle>Керування викладачами</PageTitle>
+
+@if (!AuthService.IsInRole("Manager"))
+{
+    <div class="alert alert-danger shadow">
+        <h3>Доступ обмежено!</h3>
+        <p>Тільки користувачі з роллю <strong>Менеджер</strong> мають право редагувати дані викладачів.</p>
+        <a href="login" class="btn btn-outline-danger">Увійти з іншою роллю</a>
+    </div>
+}
+else
+{
+    <h1>Керування викладачами (Режим Менеджера)</h1>
+
+    <div class="card p-3 mb-4 bg-light">
+        <h4>@(isEditMode ? "Редагування" : "Створення")</h4>
+        <div class="row g-3">
+            <div class="col-md-9">
+                <input type="text" class="form-control" @bind="currentTeacher.FullName" placeholder="Введіть ПІБ..." />
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" @onclick="SaveTeacher">Зберегти</button>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>ПІБ викладача</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in teachers ?? new())
+            {
+                <tr>
+                    <td>@t.Id</td>
+                    <td>@t.FullName</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => Edit(t)">Змінити</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Delete(t.Id)">Видалити</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TeacherModel> teachers;
+    private TeacherModel currentTeacher = new();
+    private bool isEditMode = false;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load() => teachers = await ApiClient.GetTeachersAsync();
+
+    private async Task SaveTeacher()
+    {
+        if (isEditMode) await ApiClient.UpdateTeacherAsync(currentTeacher);
+        else await ApiClient.AddTeacherAsync(currentTeacher);
+        currentTeacher = new();
+        isEditMode = false;
+        await Load();
+    }
+
+    private void Edit(TeacherModel t) { currentTeacher = new() { Id = t.Id, FullName = t.FullName }; isEditMode = true; }
+    private async Task Delete(int id) { await ApiClient.DeleteTeacherAsync(id); await Load(); }
+}

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="DigitalCollege.BLL/DigitalCollege.BLL.csproj" />
+  <Project Path="DigitalCollege.DAL/DigitalCollege.DAL.csproj" />
+  <Project Path="DigitalCollege.PL/DigitalCollege.PL.csproj" />
+  <Project Path="DigitalCollege.Tests/DigitalCollege.Tests.csproj" />
+  <Project Path="DigitalCollege.UI/DigitalCollege.UI.csproj" />
+</Solution>

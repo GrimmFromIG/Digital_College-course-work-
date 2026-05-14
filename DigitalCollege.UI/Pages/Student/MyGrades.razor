@@ -1,0 +1,63 @@
+@page "/student/my-grades"
+@inject ApiClient ApiClient
+@inject AuthService AuthService
+
+<PageTitle>Мої оцінки</PageTitle>
+
+@if (!AuthService.IsInRole("Student"))
+{
+    <div class="alert alert-info">
+        <h4>Ця сторінка доступна лише для Студентів</h4>
+        <p>Будь ласка, авторизуйтесь як студент, щоб переглянути свої результати.</p>
+    </div>
+}
+else
+{
+    <h1>Ваші оцінки, @AuthService.CurrentUser.FullName</h1>
+    
+    <div class="alert alert-secondary">
+        Ваш персональний ID студента: <strong>@AuthService.CurrentUser.Id</strong>
+    </div>
+
+    @if (grades == null)
+    {
+        <button class="btn btn-primary mb-3" @onclick="LoadGrades">Оновити дані</button>
+    }
+
+    <table class="table table-striped border">
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Дисципліна</th>
+                <th>Оцінка</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (grades != null)
+            {
+                @foreach (var g in grades)
+                {
+                    <tr>
+                        <td>@g.DateAssigned.ToString("dd.MM.yyyy")</td>
+                        <td>@g.DisciplineName</td>
+                        <td><span class="badge bg-primary">@g.Value</span></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GradeModel> grades;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("Student")) await LoadGrades();
+    }
+
+    private async Task LoadGrades()
+    {
+        grades = await ApiClient.GetStudentGradesAsync(AuthService.CurrentUser.Id);
+    }
+}
