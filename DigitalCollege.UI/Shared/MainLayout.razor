@@ -1,0 +1,67 @@
+@inherits LayoutComponentBase
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+@implements IDisposable
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
+<MudLayout>
+
+    <MudAppBar Elevation="1" Color="Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h6" Class="ml-3">Е-Кафедра</MudText>
+
+        <MudSpacer /> @if (AuthService.IsAuthenticated)
+        {
+            <MudText Typo="Typo.body2" Class="mr-4 d-none d-sm-block">
+                Вітаємо, <strong>@AuthService.CurrentUser.FullName</strong> (@AuthService.CurrentUser.Role)
+            </MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Inherit" Size="Size.Small" OnClick="Logout" Class="mr-2">
+                Вийти
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" Href="login" Class="mr-2">
+                Увійти
+            </MudButton>
+        }
+
+        <MudTooltip Text="Про Blazor">
+            <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Inherit" Href="https://docs.microsoft.com/aspnet/" Target="_blank" />
+        </MudTooltip>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-6 pb-8">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized() => AuthService.OnChange += StateHasChanged;
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        NavManager.NavigateTo("/login");
+    }
+
+    public void Dispose() => AuthService.OnChange -= StateHasChanged;
+}
