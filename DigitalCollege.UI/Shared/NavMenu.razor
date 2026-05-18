@@ -1,0 +1,61 @@
+@inject AuthService AuthService
+@implements IDisposable
+
+<MudNavMenu Class="pt-4">
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        Головна
+    </MudNavLink>
+
+    @if (!AuthService.IsAuthenticated || AuthService.IsInRole("Unregistered"))
+    {
+        <MudNavLink Href="public/teachers" Icon="@Icons.Material.Filled.People">
+            Викладачі
+        </MudNavLink>
+        <MudNavLink Href="public/disciplines" Icon="@Icons.Material.Filled.MenuBook">
+            Дисципліни
+        </MudNavLink>
+        <MudNavLink Href="public/about-fknt" Icon="@Icons.Material.Filled.Info">Про факультет</MudNavLink>
+    }
+
+    @if (AuthService.IsInRole("Manager"))
+    {
+        <MudText Typo="Typo.overline" Class="px-4 mt-4 mb-2 font-weight-bold text-muted">АДМІНІСТРУВАННЯ</MudText>
+
+        <MudNavLink Href="manager/groups" Icon="@Icons.Material.Filled.Class">
+            Керування групами
+        </MudNavLink>
+        <MudNavLink Href="manager/teachers" Icon="@Icons.Material.Filled.ManageAccounts">
+            Керування викладачами
+        </MudNavLink>
+        <MudNavLink Href="manager/students" Icon="@Icons.Material.Filled.PeopleOutline">
+            Керування студентами
+        </MudNavLink>
+        <MudNavLink Href="manager/disciplines" Icon="@Icons.Material.Filled.LibraryBooks">
+            Керування дисциплінами
+        </MudNavLink>
+    }
+
+    @if (AuthService.IsInRole("Teacher"))
+    {
+        <MudText Typo="Typo.overline" Class="px-4 mt-4 mb-2 font-weight-bold text-muted">ЖУРНАЛ</MudText>
+
+        <MudNavLink Href="teacher/grades" Icon="@Icons.Material.Filled.EditNote">
+            Виставити оцінки
+        </MudNavLink>
+    }
+
+    @if (AuthService.IsInRole("Student"))
+    {
+        <MudText Typo="Typo.overline" Class="px-4 mt-4 mb-2 font-weight-bold text-muted">НАВЧАННЯ</MudText>
+
+        <MudNavLink Href="student/my-grades" Icon="@Icons.Material.Filled.School">
+            Мої оцінки
+        </MudNavLink>
+    }
+</MudNavMenu>
+
+@code {
+    protected override void OnInitialized() => AuthService.OnChange += StateHasChanged;
+
+    public void Dispose() => AuthService.OnChange -= StateHasChanged;
+}
