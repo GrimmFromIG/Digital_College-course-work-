@@ -1,0 +1,91 @@
+@page "/manager/teachers"
+@inject ApiClient ApiClient
+@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Керування викладачами</MudText>
+
+<MudCard Elevation="3" Class="mb-4">
+    <MudCardContent>
+        <MudGrid AlignItems="AlignItems.Center">
+            <MudItem xs="12" md="4"><MudTextField @bind-Value="currentTeacher.FullName" Label="ПІБ" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="3"><MudTextField @bind-Value="currentTeacher.Email" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="3"><MudTextField @bind-Value="currentTeacher.Password" Label="Пароль" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="2" Class="d-flex gap-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTeacher" Class="w-100">Зберегти</MudButton>
+                @if (isEditMode)
+                {
+                    <MudButton Variant="Variant.Text" OnClick="CancelEdit">Скасувати</MudButton>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+<div class="d-flex flex-wrap gap-3 mb-4 align-center">
+    <MudTextField @bind-Value="SearchTerm" Placeholder="ПІБ..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1" />
+    <MudSelect T="int?" @bind-Value="FilterDisciplineId" Label="Дисципліна" Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1">
+        <MudSelectItem T="int?" Value="null">Усі дисципліни</MudSelectItem>
+        @if (allDisciplines != null)
+        {
+            @foreach(var d in allDisciplines) {
+                <MudSelectItem T="int?" Value="@d.Id">@d.Name</MudSelectItem>
+            }
+        }
+    </MudSelect>
+    <MudSelect T="string" @bind-Value="SortBy" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 150px;">
+        <MudSelectItem Value="@("name_asc")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplySearch" Class="px-6">Знайти</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearSearch">Очистити</MudButton>
+</div>
+
+<MudTable Items="@teachers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(teachers == null)" Elevation="3">
+    <HeaderContent><MudTh>ПІБ</MudTh><MudTh>Дисципліни</MudTh><MudTh>Дії</MudTh></HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ПІБ">@context.FullName</MudTd>
+        <MudTd DataLabel="Дисципліни"><MudText Typo="Typo.body2">@context.Disciplines</MudText></MudTd>
+        <MudTd DataLabel="Дії">
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" OnClick="() => Edit(context)" Class="mr-2">Змінити</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Delete(context.Id)">Видалити</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<TeacherModel> teachers;
+    private List<DisciplineModel> allDisciplines;
+    private TeacherModel currentTeacher = new();
+    private bool isEditMode = false;
+    private string SearchTerm = "";
+    private int? FilterDisciplineId = null;
+    private string SortBy = "name_asc";
+
+    protected override async Task OnInitializedAsync() { await LoadDisciplines(); await LoadTeachers(); }
+    private async Task ApplySearch() => await LoadTeachers();
+    private async Task ClearSearch() { SearchTerm = ""; FilterDisciplineId = null; SortBy = "name_asc"; await LoadTeachers(); }
+    private async Task LoadDisciplines() { allDisciplines = await ApiClient.GetDisciplinesAsync(); }
+    private async Task LoadTeachers() { teachers = await ApiClient.GetTeachersAsync(SearchTerm, FilterDisciplineId, SortBy); }
+    private async Task SaveTeacher() { if (isEditMode) await ApiClient.UpdateTeacherAsync(currentTeacher); else await ApiClient.AddTeacherAsync(currentTeacher); CancelEdit(); await LoadTeachers(); }
+    private void Edit(TeacherModel t) { currentTeacher = new() { Id = t.Id, FullName = t.FullName, Email = t.Email }; isEditMode = true; }
+    private void CancelEdit() { currentTeacher = new(); isEditMode = false; }
+
+    private async Task Delete(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Видалити викладача та його акаунт?");
+        if (confirmed)
+        {
+            try
+            {
+                await ApiClient.DeleteTeacherAsync(id);
+                Snackbar.Add("Викладача видалено.", Severity.Info);
+                await LoadTeachers();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+}

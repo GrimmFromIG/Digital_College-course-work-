@@ -1,0 +1,95 @@
+@page "/manager/students"
+@inject ApiClient ApiClient
+@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Керування студентами</MudText>
+
+<MudCard Elevation="3" Class="mb-4">
+    <MudCardContent>
+        <MudGrid AlignItems="AlignItems.Center">
+            <MudItem xs="12" md="3"><MudTextField @bind-Value="currentStudent.FullName" Label="ПІБ" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="2">
+                <MudSelect T="int" @bind-Value="currentStudent.GroupId" Label="Група" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelectItem T="int" Value="0">-- Група --</MudSelectItem>
+                    @if (groupsList != null)
+                    {
+                        @foreach(var g in groupsList) {
+                            <MudSelectItem T="int" Value="@g.Id">@g.Name</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="3"><MudTextField @bind-Value="currentStudent.Email" Label="Email" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="2"><MudTextField @bind-Value="currentStudent.Password" Label="Пароль" Variant="Variant.Outlined" Margin="Margin.Dense" /></MudItem>
+            <MudItem xs="12" md="2" Class="d-flex gap-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveStudent" Class="flex-grow-1">Зберегти</MudButton>
+                @if (isEditMode)
+                {
+                    <MudButton Variant="Variant.Text" OnClick="CancelEdit">Скасувати</MudButton>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+<div class="d-flex flex-wrap gap-3 mb-4 align-center">
+    <MudTextField @bind-Value="SearchTerm" Clearable="true" Placeholder="ПІБ..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1" />
+    <MudTextField @bind-Value="FilterGroupName" Clearable="true" Placeholder="Група (Б-121-24-1-ПІ)..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Class" Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1" />
+    <MudSelect T="string" @bind-Value="SortBy" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 170px;">
+        <MudSelectItem Value="@("name_asc")">А - Я (За ПІБ)</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А (За ПІБ)</MudSelectItem>
+    </MudSelect>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplySearch" Class="px-6">Знайти</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearSearch">Очистити</MudButton>
+</div>
+
+<MudTable Items="@students" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(students == null)" Elevation="3">
+    <HeaderContent><MudTh>ПІБ</MudTh><MudTh>Група</MudTh><MudTh>Email</MudTh><MudTh>Дії</MudTh></HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ПІБ">@context.FullName</MudTd>
+        <MudTd DataLabel="Група"><MudChip T="string" Color="Color.Info" Size="Size.Small">@context.GroupName</MudChip></MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Дії">
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" OnClick="() => EditStudent(context)" Class="mr-2">Змінити</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteStudent(context.Id)">Видалити</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<StudentModel> students;
+    private List<GroupModel> groupsList;
+    private StudentModel currentStudent = new();
+    private bool isEditMode = false;
+    private string SearchTerm = "";
+    private string FilterGroupName = "";
+    private string SortBy = "name_asc";
+
+    protected override async Task OnInitializedAsync() { await LoadGroups(); await LoadStudents(); }
+    private async Task ApplySearch() => await LoadStudents();
+    private async Task ClearSearch() { SearchTerm = ""; FilterGroupName = ""; SortBy = "name_asc"; await LoadStudents(); }
+    private async Task LoadStudents() { students = await ApiClient.GetStudentsAsync(SearchTerm, FilterGroupName, SortBy); }
+    private async Task LoadGroups() { groupsList = await ApiClient.GetGroupsAsync(""); }
+    private async Task SaveStudent() { if (isEditMode) await ApiClient.UpdateStudentAsync(currentStudent); else await ApiClient.AddStudentAsync(currentStudent); CancelEdit(); await LoadStudents(); }
+    private void EditStudent(StudentModel s) { currentStudent = new() { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId, Email = s.Email }; isEditMode = true; }
+    private void CancelEdit() { currentStudent = new(); isEditMode = false; }
+
+    private async Task DeleteStudent(int id)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Видалити студента та його акаунт?");
+        if (confirmed)
+        {
+            try
+            {
+                await ApiClient.DeleteStudentAsync(id);
+                Snackbar.Add("Студента видалено.", Severity.Info);
+                await LoadStudents();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+}
