@@ -1,0 +1,259 @@
+@page "/teacher/grades"
+@inject ApiClient ApiClient
+@inject AuthService AuthService
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
+
+<PageTitle>Журнал оцінювання</PageTitle>
+
+@if (AuthService.CurrentUser == null || !AuthService.IsInRole("Teacher"))
+{
+    <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Elevation="3" Class="my-4">
+        <MudText Typo="Typo.h6">Доступ обмежено!</MudText>
+        <MudText>Ця сторінка доступна виключно для користувачів із роллю <strong>Викладач</strong>.</MudText>
+    </MudAlert>
+}
+else
+{
+    <MudText Typo="Typo.h4" Class="mb-4">Виставлення оцінок студентам</MudText>
+
+    <EditForm Model="newGrade" OnValidSubmit="SubmitGrade">
+        <DataAnnotationsValidator />
+
+        <MudCard Elevation="3" Class="rounded-lg mb-6">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" Class="text-secondary font-weight-bold mb-4">
+                    @(isEditMode ? "Редагувати оцінку" : "Нова оцінка")
+                </MudText>
+
+                <MudGrid>
+                    <MudItem xs="12" md="4">
+                        <MudSelect T="int" @bind-Value="newGrade.StudentId" Label="Студент" Variant="Variant.Outlined" Disabled="@isEditMode" Margin="Margin.Dense" For="@(() => newGrade.StudentId)">
+                            <MudSelectItem T="int" Value="0">-- Оберіть студента --</MudSelectItem>
+                            @if (studentsList != null)
+                            {
+                                @foreach (var s in studentsList)
+                                {
+                                    <MudSelectItem T="int" Value="@s.Id">@s.FullName</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" md="4">
+                        <MudSelect T="int" @bind-Value="newGrade.DisciplineId" Label="Дисципліна" Variant="Variant.Outlined" Disabled="@isEditMode" Margin="Margin.Dense" For="@(() => newGrade.DisciplineId)">
+                            <MudSelectItem T="int" Value="0">-- Ваші дисципліни --</MudSelectItem>
+                            @if (disciplinesList != null)
+                            {
+                                @foreach (var d in disciplinesList)
+                                {
+                                    <MudSelectItem T="int" Value="@d.Id">@d.Name</MudSelectItem>
+                                }
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12" md="2">
+                        <MudNumericField T="int" @bind-Value="newGrade.Value" Label="Бали (0-100)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Max="100" For="@(() => newGrade.Value)" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="2" Class="d-flex align-end gap-2">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" Class="w-100">
+                            Зберегти
+                        </MudButton>
+                        @if (isEditMode)
+                        {
+                            <MudButton Variant="Variant.Text" OnClick="CancelEdit">Скасувати</MudButton>
+                        }
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </EditForm>
+
+    <MudDivider Class="my-6" />
+
+    <div class="d-flex flex-wrap align-center mb-4 gap-4">
+        <MudText Typo="Typo.h5" Class="font-weight-bold">Перегляд оцінок студента</MudText>
+
+        <MudSelect T="int" Value="@selectedStudentId" ValueChanged="@OnStudentSelected" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 300px; background-color: white;">
+            <MudSelectItem T="int" Value="0">-- Оберіть студента --</MudSelectItem>
+            @if (studentsList != null)
+            {
+                @foreach (var s in studentsList)
+                {
+                    <MudSelectItem T="int" Value="@s.Id">@s.FullName</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </div>
+
+    <MudTable Items="@viewGrades" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="3" Class="bg-white rounded-lg">
+        <HeaderContent>
+            <MudTh>Дисципліна</MudTh>
+            <MudTh Style="text-align: center;">Бал</MudTh>
+            <MudTh>Дата виставлення</MudTh>
+            <MudTh>Дії</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Дисципліна"><strong>@context.DisciplineName</strong></MudTd>
+            <MudTd DataLabel="Бал" Style="text-align: center;">
+                <MudChip T="string" Color="@GetGradeColor(context.Value)" Variant="Variant.Filled">
+                    @context.Value.ToString()
+                </MudChip>
+            </MudTd>
+            <MudTd DataLabel="Дата">@context.DateAssigned.ToString("dd.MM.yyyy HH:mm")</MudTd>
+            <MudTd DataLabel="Дії">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => EditGrade(context)">Змінити</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="() => DeleteGrade(context.Id)">Видалити</MudButton>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">
+                Оберіть студента, щоб побачити виставлені вами оцінки.
+            </MudText>
+        </NoRecordsContent>
+    </MudTable>
+}
+
+@code {
+    private CreateGradeModel newGrade = new();
+    private List<StudentModel> studentsList;
+    private List<DisciplineModel> disciplinesList;
+    private List<GradeModel> viewGrades;
+    private int selectedStudentId = 0;
+    private bool isEditMode = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("Teacher"))
+            await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            studentsList = await ApiClient.GetStudentsAsync();
+            disciplinesList = await ApiClient.GetDisciplinesAsync(teacherId: AuthService.CurrentUser?.Id);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка завантаження даних", Severity.Error);
+        }
+    }
+
+    private async Task SubmitGrade()
+    {
+        if (newGrade.StudentId == 0 || newGrade.DisciplineId == 0)
+        {
+            Snackbar.Add("Оберіть студента та дисципліну!", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            newGrade.TeacherId = AuthService.CurrentUser?.Id ?? 0;
+
+            if (isEditMode)
+            {
+                await ApiClient.UpdateGradeAsync(newGrade);
+                Snackbar.Add("Оцінку збережено!", Severity.Success);
+            }
+            else
+            {
+                await ApiClient.AssignGradeAsync(newGrade);
+                Snackbar.Add("Оцінку виставлено!", Severity.Success);
+            }
+
+            if (selectedStudentId == 0 && newGrade.StudentId > 0)
+                selectedStudentId = newGrade.StudentId;
+
+            CancelEdit();
+
+            if (selectedStudentId != 0)
+                await RefreshGradesTable(selectedStudentId);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private void EditGrade(GradeModel g)
+    {
+        newGrade = new CreateGradeModel
+        {
+            Id = g.Id,
+            StudentId = selectedStudentId,
+            DisciplineId = g.DisciplineId,
+            Value = g.Value
+        };
+        isEditMode = true;
+    }
+
+    private void CancelEdit()
+    {
+        newGrade = new();
+        isEditMode = false;
+    }
+
+    private async Task DeleteGrade(int gradeId)
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Ви впевнені, що хочете видалити цю оцінку?");
+        if (confirmed)
+        {
+            try
+            {
+                await ApiClient.DeleteGradeAsync(gradeId, AuthService.CurrentUser?.Id ?? 0);
+                Snackbar.Add("Оцінку видалено", Severity.Info);
+                await RefreshGradesTable(selectedStudentId);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add(ex.Message, Severity.Error);
+            }
+        }
+    }
+
+    private async Task OnStudentSelected(int id)
+    {
+        selectedStudentId = id;
+        await RefreshGradesTable(id);
+        CancelEdit();
+    }
+
+    private async Task RefreshGradesTable(int studentId)
+    {
+        if (studentId == 0)
+        {
+            viewGrades = null;
+            return;
+        }
+
+        try
+        {
+            var allGrades = await ApiClient.GetStudentGradesAsync(studentId);
+
+            if (disciplinesList != null && disciplinesList.Any())
+            {
+                viewGrades = allGrades.Where(g => disciplinesList.Any(d => d.Id == g.DisciplineId)).ToList();
+            }
+            else
+            {
+                viewGrades = new List<GradeModel>();
+            }
+        }
+        catch (Exception)
+        {
+            viewGrades = new List<GradeModel>();
+        }
+    }
+
+    private Color GetGradeColor(int value)
+    {
+        if (value >= 74) return Color.Success;
+        if (value >= 60) return Color.Warning;
+        return Color.Error;
+    }
+}
