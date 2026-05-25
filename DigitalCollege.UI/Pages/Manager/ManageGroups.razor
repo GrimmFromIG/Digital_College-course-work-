@@ -1,90 +1,94 @@
-﻿@page "/manager/groups"
+@page "/manager/groups"
 @inject ApiClient ApiClient
 @inject AuthService AuthService
+@inject ISnackbar Snackbar
 
 <PageTitle>Керування групами</PageTitle>
 
 @if (!AuthService.IsInRole("Manager"))
 {
-    <div class="alert alert-danger shadow">
-        <h3>Доступ обмежено!</h3>
-        <p>Тільки користувачі з роллю <strong>Менеджер</strong> мають право керувати групами.</p>
-        <a href="login" class="btn btn-outline-danger">Увійти з іншою роллю</a>
-    </div>
+    <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Elevation="3" Class="my-4">
+        <MudText Typo="Typo.h6">Доступ обмежено!</MudText>
+        <MudText>Тільки користувачі з роллю <strong>Менеджер</strong> мають право керувати групами.</MudText>
+        <MudButton Variant="Variant.Outlined" Color="Color.Inherit" Link="login" Class="mt-2">
+            Увійти з іншою роллю
+        </MudButton>
+    </MudAlert>
 }
 else
 {
-    <h1>Керування групами академії</h1>
+    <MudText Typo="Typo.h4" Class="mb-4">Керування групами академії</MudText>
 
-    <div class="card p-3 mb-4 bg-light shadow-sm">
-        <h4>@(isEditMode ? "Редагувати групу" : "Створити нову групу")</h4>
+    <MudCard Elevation="3" Class="mb-4">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">@(isEditMode ? "Редагувати групу" : "Створити нову групу")</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <EditForm Model="currentGroup" OnValidSubmit="SaveGroup">
+                <DataAnnotationsValidator />
 
-        <EditForm Model="currentGroup" OnValidSubmit="SaveGroup">
-            <DataAnnotationsValidator />
+                <MudGrid AlignItems="AlignItems.Center">
+                    <MudItem xs="12" md="9">
+                        <MudTextField @bind-Value="currentGroup.Name"
+                                      Label="Назва групи (наприклад: КН-21)..."
+                                      Variant="Variant.Outlined"
+                                      Margin="Margin.Dense"
+                                      For="@(() => currentGroup.Name)" />
+                    </MudItem>
+                    <MudItem xs="12" md="3" Class="d-flex gap-2">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="w-100">
+                            Зберегти
+                        </MudButton>
+                        @if (isEditMode)
+                        {
+                            <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Secondary" OnClick="CancelEdit">
+                                Скасувати
+                            </MudButton>
+                        }
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
 
-            <div class="row g-3">
-                <div class="col-md-9">
-                    <InputText class="form-control" @bind-Value="currentGroup.Name" placeholder="Назва групи (наприклад: КН-21)..." />
-                    <ValidationMessage For="() => currentGroup.Name" class="text-danger small mt-1" />
-                </div>
-                <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100">Зберегти</button>
-                    @if (isEditMode)
-                    {
-                        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Скасувати</button>
-                    }
-                </div>
-            </div>
-        </EditForm>
-    </div>
-
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <div class="alert alert-info">@message</div>
-    }
-
-    <table class="table table-bordered table-striped mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th style="width: 15%">ID</th>
-                <th>Назва групи</th>
-                <th style="width: 25%">Дії</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (groups == null)
-            {
-                <tr><td colspan="3" class="text-center">Завантаження даних...</td></tr>
-            }
-            else if (!groups.Any())
-            {
-                <tr><td colspan="3" class="text-center text-muted">Жодної групи ще не створено.</td></tr>
-            }
-            else
-            {
-                @foreach (var g in groups)
-                {
-                    <tr>
-                        <td>@g.Id</td>
-                        <td><strong>@g.Name</strong></td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-warning me-2" @onclick="() => Edit(g)">Змінити</button>
-                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => Delete(g.Id)">Видалити</button>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+    <MudTable Items="@groups" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(groups == null)" LoadingProgressColor="Color.Info" Elevation="3">
+        <HeaderContent>
+            <MudTh Style="width: 15%">ID</MudTh>
+            <MudTh>Назва групи</MudTh>
+            <MudTh Style="width: 25%">Дії</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ID">@context.Id</MudTd>
+            <MudTd DataLabel="Назва групи"><strong>@context.Name</strong></MudTd>
+            <MudTd DataLabel="Дії">
+                <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small" OnClick="() => Edit(context)" Class="me-2">
+                    Змінити
+                </MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="() => Delete(context.Id)">
+                    Видалити
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">Жодної групи ще не створено.</MudText>
+        </NoRecordsContent>
+    </MudTable>
 }
 
 @code {
     private List<GroupModel> groups;
     private GroupModel currentGroup = new();
     private bool isEditMode = false;
-    private string message = "";
 
-    protected override async Task OnInitializedAsync() => await LoadGroups();
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("Manager"))
+        {
+            await LoadGroups();
+        }
+    }
 
     private async Task LoadGroups()
     {
@@ -94,7 +98,7 @@ else
         }
         catch (Exception ex)
         {
-            message = $"Помилка завантаження: {ex.Message}";
+            Snackbar.Add($"Помилка завантаження: {ex.Message}", Severity.Error);
         }
     }
 
@@ -105,12 +109,12 @@ else
             if (isEditMode)
             {
                 await ApiClient.UpdateGroupAsync(currentGroup);
-                message = "Групу успішно оновлено!";
+                Snackbar.Add("Групу успішно оновлено!", Severity.Success);
             }
             else
             {
                 await ApiClient.AddGroupAsync(currentGroup);
-                message = "Нову групу успішно додано!";
+                Snackbar.Add("Нову групу успішно додано!", Severity.Success);
             }
 
             CancelEdit();
@@ -118,7 +122,7 @@ else
         }
         catch (Exception ex)
         {
-            message = $"Помилка збереження: {ex.Message}";
+            Snackbar.Add($"Помилка збереження: {ex.Message}", Severity.Error);
         }
     }
 
@@ -126,7 +130,6 @@ else
     {
         currentGroup = new() { Id = g.Id, Name = g.Name };
         isEditMode = true;
-        message = "";
     }
 
     private void CancelEdit()
@@ -140,13 +143,13 @@ else
         try
         {
             await ApiClient.DeleteGroupAsync(id);
-            message = "Групу видалено.";
+            Snackbar.Add("Групу видалено.", Severity.Info);
             CancelEdit();
             await LoadGroups();
         }
         catch (Exception ex)
         {
-            message = $"Помилка видалення: {ex.Message}";
+            Snackbar.Add($"Помилка видалення: {ex.Message}", Severity.Error);
         }
     }
 }
