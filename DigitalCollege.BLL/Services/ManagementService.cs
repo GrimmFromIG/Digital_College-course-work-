@@ -3,8 +3,6 @@ using DigitalCollege.BLL.Exceptions;
 using DigitalCollege.BLL.Interfaces;
 using DigitalCollege.DAL.Entities;
 using DigitalCollege.DAL.UnitOfWork;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace DigitalCollege.BLL.Services
 {
@@ -17,7 +15,6 @@ namespace DigitalCollege.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        // --- МЕТОДИ ДЛЯ ВИКЛАДАЧІВ ---
         public void AddTeacher(TeacherDto teacherDto)
         {
             if (string.IsNullOrWhiteSpace(teacherDto.FullName))
@@ -52,7 +49,6 @@ namespace DigitalCollege.BLL.Services
             return query.Select(t => new TeacherDto { Id = t.Id, FullName = t.FullName }).ToList();
         }
 
-        // --- МЕТОДИ ДЛЯ СТУДЕНТІВ ---
         public void AddStudent(StudentDto studentDto)
         {
             if (string.IsNullOrWhiteSpace(studentDto.FullName))
@@ -81,16 +77,28 @@ namespace DigitalCollege.BLL.Services
 
         public IEnumerable<StudentDto> GetStudents(string searchTerm = null, int? groupId = null, string sortBy = null)
         {
+            var allGroups = _unitOfWork.Groups.GetAll().ToList();
+
             var data = _unitOfWork.Students.Find(s =>
                 (string.IsNullOrWhiteSpace(searchTerm) || s.FullName.ToLower().Contains(searchTerm.ToLower())) &&
                 (!groupId.HasValue || s.GroupId == groupId.Value));
+
             var query = data.AsQueryable();
+
             if (sortBy == "name_desc") query = query.OrderByDescending(s => s.FullName);
             else query = query.OrderBy(s => s.FullName);
-            return query.Select(s => new StudentDto { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId }).ToList();
+
+            var studentsFromDb = query.ToList();
+
+            return studentsFromDb.Select(s => new StudentDto
+            {
+                Id = s.Id,
+                FullName = s.FullName,
+                GroupId = s.GroupId,
+                GroupName = allGroups.FirstOrDefault(g => g.Id == s.GroupId)?.Name ?? "Без групи"
+            }).ToList();
         }
 
-        // --- МЕТОДИ ДЛЯ ДИСЦИПЛІН ---
         public void AddDiscipline(DisciplineDto dto)
         {
             _unitOfWork.Disciplines.Add(new Discipline { Name = dto.Name, TeacherId = dto.TeacherId });
@@ -122,7 +130,6 @@ namespace DigitalCollege.BLL.Services
             return query.Select(d => new DisciplineDto { Id = d.Id, Name = d.Name, TeacherId = d.TeacherId }).ToList();
         }
 
-        // --- 🌟 НОВІ МЕТОДИ ДЛЯ ГРУП (ПІД КЛЮЧ У СТИЛІ UNIT OF WORK) 🌟 ---
         public void AddGroup(GroupDto groupDto)
         {
             if (string.IsNullOrWhiteSpace(groupDto.Name))
@@ -155,10 +162,8 @@ namespace DigitalCollege.BLL.Services
 
         public IEnumerable<GroupDto> GetGroups()
         {
-            // Отримуємо всі групи через репозиторій
             var data = _unitOfWork.Groups.GetAll();
 
-            // Сортуємо за алфавітом та мапимо в DTO
             return data.OrderBy(g => g.Name)
                        .Select(g => new GroupDto { Id = g.Id, Name = g.Name })
                        .ToList();
