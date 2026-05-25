@@ -1,33 +1,67 @@
 @page "/public/teachers"
-@inject ApiClient ApiClient
+@inject ApiClient apiClient
+@inject ISnackbar Snackbar
 
-<h1>Наші викладачі</h1>
+<PageTitle>Наші викладачі</PageTitle>
 
-<div class="row mb-3">
-    <div class="col-md-8">
-        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @onkeyup="LoadTeachers" placeholder="Пошук викладача..." />
-    </div>
-    <div class="col-md-4">
-        <select class="form-select" @bind="SortBy" @bind:after="LoadTeachers">
-            <option value="">А - Я</option>
-            <option value="name_desc">Я - А</option>
-        </select>
-    </div>
+<MudText Typo="Typo.h4" Class="mb-4">Наші викладачі</MudText>
+
+<div class="d-flex flex-column flex-md-row gap-3 mb-4">
+    <MudTextField @bind-Value="SearchTerm"
+                  @bind-Value:after="LoadTeachers"
+                  Immediate="true"
+                  Placeholder="Пошук викладача..."
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Class="flex-grow-1" />
+
+    <MudSelect T="string" @bind-Value="SortBy"
+               @bind-Value:after="LoadTeachers"
+               Variant="Variant.Outlined"
+               Margin="Margin.Dense"
+               Style="min-width: 200px;">
+        <MudSelectItem Value="@("")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
 </div>
 
-<div class="row">
-    @foreach (var teacher in teachers ?? new())
-    {
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@teacher.FullName</h5>
-                    <p class="card-text text-muted">ID: @teacher.Id</p>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+@if (teachers == null)
+{
+    <div class="d-flex justify-center my-6">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </div>
+}
+else if (!teachers.Any())
+{
+    <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">Викладачів не знайдено.</MudText>
+}
+else
+{
+    <MudGrid>
+        @foreach (var teacher in teachers)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard Elevation="3" Class="h-100 rounded-lg">
+                    <MudCardContent>
+                        <div class="d-flex align-center mb-3">
+                            <MudAvatar Color="Color.Primary" Variant="Variant.Filled" Class="mr-3">
+                                @(string.IsNullOrWhiteSpace(teacher.FullName) ? "?" : teacher.FullName.FirstOrDefault().ToString().ToUpper())
+                            </MudAvatar>
+
+                            <MudText Typo="Typo.h6" Class="font-weight-bold">@teacher.FullName</MudText>
+                        </div>
+
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">
+                            Внутрішній ID: @teacher.Id
+                        </MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
 
 @code {
     private List<TeacherModel> teachers;
@@ -38,6 +72,15 @@
 
     private async Task LoadTeachers()
     {
-        teachers = await ApiClient.GetTeachersAsync(SearchTerm, SortBy);
+        try
+        {
+            teachers = await apiClient.GetTeachersAsync(SearchTerm, SortBy);
+
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Не вдалося завантажити список викладачів.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
     }
 }
