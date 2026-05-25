@@ -2,38 +2,62 @@
 @inject AuthService AuthService
 @inject NavigationManager NavManager
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Вхід у систему</h3>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Оберіть роль для тестування системи:</p>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary" @onclick='() => DoLogin("Manager", 1, "Адмін Менеджер")'>
-                            Увійти як Менеджер
-                        </button>
-                        
-                        <button class="btn btn-outline-success" @onclick='() => DoLogin("Teacher", 1, "Олександр Петрович")'>
-                            Увійти як Викладач (ID: 1)
-                        </button>
+<PageTitle>Вхід у систему</PageTitle>
 
-                        <button class="btn btn-outline-info" @onclick='() => DoLogin("Student", 1, "Богдан Петрощук")'>
-                            Увійти як Студент (ID: 1)
-                        </button>
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudCard Elevation="4" Class="rounded-lg">
+        <MudCardHeader Class="mud-theme-primary rounded-t-lg py-4">
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5" Class="font-weight-bold text-white align-center d-flex justify-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Login" Class="mr-2" />
+                    Вхід у систему
+                </MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
 
-                        <button class="btn btn-outline-secondary" @onclick='() => DoLogin("Unregistered", 0, "Гість")'>
-                            Продовжити як Гість
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        <MudCardContent Class="pa-6">
+            <MudText Typo="Typo.body1" Class="text-muted mb-6 text-center">
+                Оберіть роль для тестування системи:
+            </MudText>
+
+            <MudStack Spacing="3">
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.AdminPanelSettings"
+                           OnClick='() => DoLogin("Manager", 1, "Адмін Менеджер")'>
+                    Увійти як Менеджер
+                </MudButton>
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Success"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.School"
+                           OnClick='() => DoLogin("Teacher", 1, "Олександр Петрович")'>
+                    Увійти як Викладач (ID: 1)
+                </MudButton>
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Info"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.Person"
+                           OnClick='() => DoLogin("Student", 1, "Богдан Петрощук")'>
+                    Увійти як Студент (ID: 1)
+                </MudButton>
+
+                <MudDivider Class="my-2" />
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Default"
+                           Size="Size.Large"
+                           StartIcon="@Icons.Material.Filled.NoAccounts"
+                           OnClick='() => DoLogin("Unregistered", 0, "Гість")'>
+                    Продовжити як Гість
+                </MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
 
 @code {
     private void DoLogin(string role, int id, string name)
