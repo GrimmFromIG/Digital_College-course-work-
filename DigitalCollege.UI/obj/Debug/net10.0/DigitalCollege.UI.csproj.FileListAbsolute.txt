@@ -1333,9 +1333,6 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwro
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_CJK.tjcz0u77k5.dat
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_EFIGS.tptq2av103.dat
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.ggy6f195ee.wasm
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.n4xoqytibv.pdb
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\dotnet.veb161igph.js
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\blazor.webassembly.zxhwjtv6sc.js.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Authorization.y0sndbe2xe.wasm.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\Microsoft.AspNetCore.Components.09qh35fcip.wasm.gz
@@ -1547,9 +1544,6 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwro
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_CJK.tjcz0u77k5.dat.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_EFIGS.tptq2av103.dat.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\icudt_no_CJK.lfu7j35m59.dat.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.ggy6f195ee.wasm.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.n4xoqytibv.pdb.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\dotnet.veb161igph.js.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\DigitalCollege.UI.staticwebassets.runtime.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\DigitalCollege.UI.staticwebassets.endpoints.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\DigitalCollege.UI.dll
@@ -2246,10 +2240,6 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compr
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\8h4ihi94s7-{0}-tjcz0u77k5-tjcz0u77k5.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\vu6akx0cb1-{0}-tptq2av103-tptq2av103.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\evswjjqep8-{0}-lfu7j35m59-lfu7j35m59.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\54z7qbif26-{0}-ggy6f195ee-ggy6f195ee.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\n9jc77w2m2-{0}-n4xoqytibv-n4xoqytibv.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\wcwjslt1ek-{0}-veb161igph-veb161igph.gz
-C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\cngy5zl9or-{0}-wuh8gir3tb-wuh8gir3tb.gz
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\staticwebassets.build.json
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\staticwebassets.development.json
@@ -2260,3 +2250,13 @@ C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\Digit
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\refint\DigitalCollege.UI.dll
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\DigitalCollege.UI.pdb
 C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\ref\DigitalCollege.UI.dll
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.zyd47gtkcf.wasm
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.qu7f0bfujx.pdb
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\dotnet.0a9lfx319w.js
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.zyd47gtkcf.wasm.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\DigitalCollege.UI.qu7f0bfujx.pdb.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\bin\Debug\net10.0\wwwroot\_framework\dotnet.0a9lfx319w.js.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\54z7qbif26-{0}-zyd47gtkcf-zyd47gtkcf.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\n9jc77w2m2-{0}-qu7f0bfujx-qu7f0bfujx.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\wcwjslt1ek-{0}-0a9lfx319w-0a9lfx319w.gz
+C:\VScode\Digital_College-course-work-\DigitalCollege.UI\obj\Debug\net10.0\compressed\cngy5zl9or-{0}-rfobhtet52-rfobhtet52.gz

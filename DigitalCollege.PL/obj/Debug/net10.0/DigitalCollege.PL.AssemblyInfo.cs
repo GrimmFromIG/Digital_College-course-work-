@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DigitalCollege.PL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a716875216a84d9f09b3b4e94aede303779eb113")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+47a512e4716a320b8cf62af589027854620b6473")]
 [assembly: System.Reflection.AssemblyProductAttribute("DigitalCollege.PL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DigitalCollege.PL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

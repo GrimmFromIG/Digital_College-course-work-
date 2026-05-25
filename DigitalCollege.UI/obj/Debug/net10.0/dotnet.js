@@ -5,7 +5,7 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
   "mainAssemblyName": "DigitalCollege.UI",
   "applicationEnvironment": "Development",
   "resources": {
-    "hash": "sha256-xv9mLWyRqFXShPs9Yp1UYk7sZx09P0BxFgVazWvDpWw=",
+    "hash": "sha256-34nkm6owDE2EaIXy0RlJRbbjvijL7xA3MkNRIn70ICA=",
     "jsModuleNative": [
       {
         "name": "dotnet.native.mx9wzm9o5h.js"
@@ -1260,16 +1260,16 @@ var e=!1;const t=async()=>WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,
       },
       {
         "virtualPath": "DigitalCollege.UI.wasm",
-        "name": "DigitalCollege.UI.ggy6f195ee.wasm",
-        "integrity": "sha256-EClrRPt/JMfH04skIc68eHXeRy0TB44OzyS8CJFHZ+8=",
+        "name": "DigitalCollege.UI.zyd47gtkcf.wasm",
+        "integrity": "sha256-RWnlYkK25ILU3t9LCPl+PL2NjwWaCZPvC4TywCjrx+E=",
         "cache": "force-cache"
       }
     ],
     "pdb": [
       {
         "virtualPath": "DigitalCollege.UI.pdb",
-        "name": "DigitalCollege.UI.n4xoqytibv.pdb",
-        "integrity": "sha256-ty+ieio8Xx8W1FfZtyMftK1VtvQJNO1KhhL/KJnsMDU=",
+        "name": "DigitalCollege.UI.qu7f0bfujx.pdb",
+        "integrity": "sha256-fq57u5soIYG7XUeY/7NvHxXOYtitYcart7F1fce6TuI=",
         "cache": "force-cache"
       }
     ],
