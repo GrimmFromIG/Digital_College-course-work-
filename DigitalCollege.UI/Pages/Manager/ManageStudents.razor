@@ -1,63 +1,111 @@
 @page "/manager/students"
 @inject ApiClient ApiClient
+@inject ISnackbar Snackbar
 
-<h1>Керування студентами</h1>
+<MudText Typo="Typo.h4" Class="mb-4">Керування студентами</MudText>
 
-<div class="card p-3 mb-4">
-    <h4>@(isEditMode ? "Редагувати студента" : "Додати студента")</h4>
-    <div class="row g-3">
-        <div class="col-md-6">
-            <input type="text" class="form-control" @bind="currentStudent.FullName" placeholder="ПІБ" />
-        </div>
-        <div class="col-md-3">
-            <input type="number" class="form-control" @bind="currentStudent.GroupId" placeholder="ID групи" />
-        </div>
-        <div class="col-md-3">
-            <button class="btn btn-primary w-100" @onclick="SaveStudent">Зберегти</button>
-            @if (isEditMode) { <button class="btn btn-link" @onclick="CancelEdit">Скасувати</button> }
-        </div>
-    </div>
+<MudCard Elevation="3" Class="mb-4">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@(isEditMode ? "Редагувати студента" : "Додати студента")</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid AlignItems="AlignItems.Center">
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="currentStudent.FullName"
+                              Label="ПІБ студента"
+                              Variant="Variant.Outlined"
+                              Margin="Margin.Dense" />
+            </MudItem>
+
+            <MudItem xs="12" md="3">
+                <MudSelect T="int" @bind-Value="currentStudent.GroupId" Label="Оберіть групу" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    <MudSelectItem T="int" Value="0">-- Оберіть групу --</MudSelectItem>
+                    @if (groupsList != null)
+                    {
+                        @foreach (var g in groupsList)
+                        {
+                            <MudSelectItem T="int" Value="@g.Id">@g.Name</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" md="3" Class="d-flex gap-2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveStudent" Class="flex-grow-1">
+                    Зберегти
+                </MudButton>
+                @if (isEditMode)
+                {
+                    <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit">
+                        Скасувати
+                    </MudButton>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+<div class="d-flex flex-column flex-md-row gap-3 mb-4">
+    <MudTextField @bind-Value="SearchTerm"
+                  @bind-Value:after="LoadStudents"
+                  Immediate="true"
+                  Placeholder="Пошук за ПІБ..."
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Class="flex-grow-1" />
+
+    <MudNumericField T="int?" @bind-Value="FilterGroupId"
+                     @bind-Value:after="LoadStudents"
+                     Placeholder="ID Групи..."
+                     Adornment="Adornment.Start"
+                     AdornmentIcon="@Icons.Material.Filled.FilterList"
+                     Variant="Variant.Outlined"
+                     Margin="Margin.Dense"
+                     Style="min-width: 150px;"
+                     Clearable="true" />
+
+    <MudSelect T="string" @bind-Value="SortBy"
+               @bind-Value:after="LoadStudents"
+               Variant="Variant.Outlined"
+               Margin="Margin.Dense"
+               Style="min-width: 150px;">
+        <MudSelectItem Value="@("")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
 </div>
 
-<div class="row mb-3">
-    <div class="col-md-5">
-        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @bind:after="LoadStudents" placeholder="Пошук..." />
-    </div>
-    <div class="col-md-3">
-        <input type="number" class="form-control" @bind="FilterGroupId" @bind:after="LoadStudents" placeholder="Група..." />
-    </div>
-    <div class="col-md-4">
-        <select class="form-select" @bind="SortBy" @bind:after="LoadStudents">
-            <option value="">А - Я</option>
-            <option value="name_desc">Я - А</option>
-        </select>
-    </div>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ПІБ</th>
-            <th>Група</th>
-            <th>Дії</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var s in students ?? new())
-        {
-            <tr>
-                <td>@s.Id</td>
-                <td>@s.FullName</td>
-                <td>@s.GroupId</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" @onclick="() => EditStudent(s)">Змінити</button>
-                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteStudent(s.Id)">Видалити</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<MudTable Items="@students" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(students == null)" LoadingProgressColor="Color.Info" Elevation="3">
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>ПІБ</MudTh>
+        <MudTh>ID Групи</MudTh>
+        <MudTh>Дії</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="ПІБ">@context.FullName</MudTd>
+        <MudTd DataLabel="Група">
+            <MudChip T="string" Color="Color.Info" Size="Size.Small" Variant="Variant.Text">
+                @context.GroupName
+            </MudChip>
+        </MudTd>
+        <MudTd DataLabel="Дії">
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" OnClick="() => EditStudent(context)" Class="mr-2">
+                Змінити
+            </MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteStudent(context.Id)">
+                Видалити
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">Студентів не знайдено.</MudText>
+    </NoRecordsContent>
+</MudTable>
 
 @code {
     private List<StudentModel> students;
@@ -67,18 +115,96 @@
     private int? FilterGroupId;
     private string SortBy = "";
 
-    protected override async Task OnInitializedAsync() => await LoadStudents();
-    private async Task LoadStudents() => students = await ApiClient.GetStudentsAsync(SearchTerm, FilterGroupId, SortBy);
+    // 1. ДОДАНО ЗМІННУ ДЛЯ ГРУП
+    private List<GroupModel> groupsList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudents();
+        await LoadGroups(); // 2. ЗАВАНТАЖУЄМО ГРУПИ ПРИ ВІДКРИТТІ СТОРІНКИ
+    }
+
+    private async Task LoadStudents()
+    {
+        try
+        {
+            students = await ApiClient.GetStudentsAsync(SearchTerm, FilterGroupId, SortBy);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка завантаження списку студентів.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    // 3. ДОДАНО МЕТОД ДЛЯ ЗАВАНТАЖЕННЯ ГРУП
+    private async Task LoadGroups()
+    {
+        try
+        {
+            groupsList = await ApiClient.GetGroupsAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Не вдалося завантажити список груп.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
+    }
 
     private async Task SaveStudent()
     {
-        if (isEditMode) await ApiClient.UpdateStudentAsync(currentStudent);
-        else await ApiClient.AddStudentAsync(currentStudent);
-        CancelEdit();
-        await LoadStudents();
+        if (string.IsNullOrWhiteSpace(currentStudent.FullName) || currentStudent.GroupId == 0)
+        {
+            Snackbar.Add("Будь ласка, введіть ПІБ та оберіть групу.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            if (isEditMode)
+            {
+                await ApiClient.UpdateStudentAsync(currentStudent);
+                Snackbar.Add("Дані студента оновлено!", Severity.Success);
+            }
+            else
+            {
+                await ApiClient.AddStudentAsync(currentStudent);
+                Snackbar.Add("Студента успішно додано!", Severity.Success);
+            }
+            CancelEdit();
+            await LoadStudents();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка збереження студента.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
     }
 
-    private void EditStudent(StudentModel s) { currentStudent = new() { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId }; isEditMode = true; }
-    private void CancelEdit() { currentStudent = new(); isEditMode = false; }
-    private async Task DeleteStudent(int id) { await ApiClient.DeleteStudentAsync(id); await LoadStudents(); }
+    private void EditStudent(StudentModel s)
+    {
+        currentStudent = new() { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId };
+        isEditMode = true;
+    }
+
+    private void CancelEdit()
+    {
+        currentStudent = new();
+        isEditMode = false;
+    }
+
+    private async Task DeleteStudent(int id)
+    {
+        try
+        {
+            await ApiClient.DeleteStudentAsync(id);
+            Snackbar.Add("Студента видалено.", Severity.Info);
+            await LoadStudents();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка видалення студента.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
