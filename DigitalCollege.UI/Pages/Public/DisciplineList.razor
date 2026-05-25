@@ -1,37 +1,54 @@
 @page "/public/disciplines"
 @inject ApiClient ApiClient
+@inject ISnackbar Snackbar
 
-<h1>Дисципліни кафедри</h1>
+<PageTitle>Дисципліни кафедри</PageTitle>
 
-<div class="row mb-3">
-    <div class="col-md-8">
-        <input type="text" class="form-control" @bind="SearchTerm" @bind:event="oninput" @onkeyup="LoadDisciplines" placeholder="Пошук дисципліни..." />
-    </div>
-    <div class="col-md-4">
-        <select class="form-select" @bind="SortBy" @bind:after="LoadDisciplines">
-            <option value="">А - Я</option>
-            <option value="name_desc">Я - А</option>
-        </select>
-    </div>
+<MudText Typo="Typo.h4" Class="mb-4">Дисципліни кафедри</MudText>
+
+<div class="d-flex flex-column flex-md-row gap-3 mb-4">
+    <MudTextField @bind-Value="SearchTerm"
+                  @bind-Value:after="LoadDisciplines"
+                  Immediate="true"
+                  Placeholder="Пошук дисципліни..."
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Search"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  Class="flex-grow-1" />
+
+    <MudSelect T="string" @bind-Value="SortBy"
+               @bind-Value:after="LoadDisciplines"
+               Variant="Variant.Outlined"
+               Margin="Margin.Dense"
+               Style="min-width: 200px;">
+        <MudSelectItem Value="@("")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Назва</th>
-            <th>Викладач</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var d in disciplines ?? new())
-        {
-            <tr>
-                <td>@d.Name</td>
-                <td>@d.TeacherName</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<MudTable Items="@disciplines" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(disciplines == null)" LoadingProgressColor="Color.Info" Elevation="3">
+    <HeaderContent>
+        <MudTh>Назва</MudTh>
+        <MudTh>Викладач</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Назва">@context.Name</MudTd>
+        <MudTd DataLabel="Викладач">
+            @if (string.IsNullOrEmpty(context.TeacherName))
+            {
+                <MudText Color="Color.Error" Typo="Typo.body2">Не призначено</MudText>
+            }
+            else
+            {
+                @context.TeacherName
+            }
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">Дисциплін не знайдено.</MudText>
+    </NoRecordsContent>
+</MudTable>
 
 @code {
     private List<DisciplineModel> disciplines;
@@ -42,6 +59,14 @@
 
     private async Task LoadDisciplines()
     {
-        disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy);
+        try
+        {
+            disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Не вдалося завантажити список дисциплін.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
     }
 }
