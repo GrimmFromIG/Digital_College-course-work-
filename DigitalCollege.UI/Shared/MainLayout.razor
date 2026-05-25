@@ -3,34 +3,58 @@
 @inject NavigationManager NavManager
 @implements IDisposable
 
-<div class="page">
-    <div class="sidebar">
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudPopoverProvider />
+
+<MudLayout>
+
+    <MudAppBar Elevation="1" Color="Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h6" Class="ml-3">Е-Кафедра</MudText>
+
+        <MudSpacer /> @if (AuthService.IsAuthenticated)
+        {
+            <MudText Typo="Typo.body2" Class="mr-4 d-none d-sm-block">
+                Вітаємо, <strong>@AuthService.CurrentUser.FullName</strong> (@AuthService.CurrentUser.Role)
+            </MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Inherit" Size="Size.Small" OnClick="Logout" Class="mr-2">
+                Вийти
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" Href="login" Class="mr-2">
+                Увійти
+            </MudButton>
+        }
+
+        <MudTooltip Text="Про Blazor">
+            <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Inherit" Href="https://docs.microsoft.com/aspnet/" Target="_blank" />
+        </MudTooltip>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Always">
         <NavMenu />
-    </div>
+    </MudDrawer>
 
-    <main>
-        <div class="top-row px-4 d-flex justify-content-between align-items-center">
-            <div>
-                @if (AuthService.IsAuthenticated)
-                {
-                    <span class="me-3">Вітаємо, <strong>@AuthService.CurrentUser.FullName</strong> (@AuthService.CurrentUser.Role)</span>
-                    <button class="btn btn-sm btn-outline-danger" @onclick="Logout">Вийти</button>
-                }
-                else
-                {
-                    <a href="login" class="btn btn-sm btn-primary">Увійти</a>
-                }
-            </div>
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pt-6 pb-8">
             @Body
-        </article>
-    </main>
-</div>
+        </MudContainer>
+    </MudMainContent>
+
+</MudLayout>
 
 @code {
+    private bool _drawerOpen = true;
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
     protected override void OnInitialized() => AuthService.OnChange += StateHasChanged;
 
     private void Logout()
