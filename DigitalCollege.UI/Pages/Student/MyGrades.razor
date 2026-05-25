@@ -6,46 +6,119 @@
 
 @if (!AuthService.IsInRole("Student"))
 {
-    <div class="alert alert-info">
+    <div class="alert alert-danger shadow-sm">
         <h4>Ця сторінка доступна лише для Студентів</h4>
         <p>Будь ласка, авторизуйтесь як студент, щоб переглянути свої результати.</p>
     </div>
 }
 else
 {
-    <h1>Ваші оцінки, @AuthService.CurrentUser.FullName</h1>
-    
-    <div class="alert alert-secondary">
-        Ваш персональний ID студента: <strong>@AuthService.CurrentUser.Id</strong>
+    <div class="row g-4 mt-2">
+        <!-- ЛІВА ЧАСТИНА: Картка профілю студента та GPA -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 bg-dark text-white p-4 text-center rounded-3">
+                <div class="my-3">
+                    <i class="bi bi-person-badge-fill text-primary" style="font-size: 4rem;"></i>
+                </div>
+                <h3 class="fw-bold mb-1">@AuthService.CurrentUser.FullName</h3>
+                <p class="text-muted small">Персональний ID: @AuthService.CurrentUser.Id</p>
+
+                <hr class="text-muted my-4" />
+
+                <!-- Віджет автоматичного розрахунку GPA -->
+                <div class="bg-secondary bg-opacity-25 rounded p-3 text-start">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small text-uppercase fw-bold text-wrap" style="font-size: 0.75rem;">Середній бал (GPA):</span>
+                        <h2 class="m-0 fw-bold text-warning">@CalculateGpa().ToString("F1")</h2>
+                    </div>
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar @(CalculateGpa() >= 74 ? "bg-success" : CalculateGpa() >= 60 ? "bg-warning" : "bg-danger")"
+                             role="progressbar"
+                             style="width: @CalculateGpa()%">
+                        </div>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0" style="font-size: 0.85rem;">
+                        @if (grades == null || !grades.Any())
+                        {
+                            <span>Оцінки ще не завантажено.</span>
+                        }
+                        else if (CalculateGpa() >= 74)
+                        {
+                            <span class="text-success">🎉 Відмінний результат! Так тримати.</span>
+                        }
+                        else if (CalculateGpa() >= 60)
+                        {
+                            <span class="text-warning">👍 Гарний рівень, піднатисніть на сесії.</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">⚠️ Увага! Потрібно покращити результати.</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРАВА ЧАСТИНА: Електронна залікова книжка (Таблиця оцінок) -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm p-4 bg-white rounded-3 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="card-title m-0 text-dark fw-bold">
+                        <i class="bi bi-journal-bookmark-fill text-primary me-2"></i>Електронний заліковий лист
+                    </h4>
+                    <button class="btn btn-sm btn-outline-primary" @onclick="LoadGrades">
+                        <i class="bi bi-arrow-clockwise"></i> Оновити
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 25%;">Дата</th>
+                                <th>Дисципліна</th>
+                                <th class="text-center" style="width: 20%;">Оцінка</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (grades == null)
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                        Синхронізація з базою даних...
+                                    </td>
+                                </tr>
+                            }
+                            else if (!grades.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        У вашій заліковій книжці ще немає виставлених оцінок.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var g in grades)
+                                {
+                                    <tr>
+                                        <td class="text-muted small">@g.DateAssigned.ToString("dd.MM.yyyy")</td>
+                                        <td><span class="fw-semibold text-secondary">@g.DisciplineName</span></td>
+                                        <td class="text-center">
+                                            <span class="badge fs-6 px-3 py-2 @(g.Value >= 74 ? "bg-success" : g.Value >= 60 ? "bg-warning text-dark" : "bg-danger")">
+                                                @g.Value
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-
-    @if (grades == null)
-    {
-        <button class="btn btn-primary mb-3" @onclick="LoadGrades">Оновити дані</button>
-    }
-
-    <table class="table table-striped border">
-        <thead>
-            <tr>
-                <th>Дата</th>
-                <th>Дисципліна</th>
-                <th>Оцінка</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (grades != null)
-            {
-                @foreach (var g in grades)
-                {
-                    <tr>
-                        <td>@g.DateAssigned.ToString("dd.MM.yyyy")</td>
-                        <td>@g.DisciplineName</td>
-                        <td><span class="badge bg-primary">@g.Value</span></td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
 }
 
 @code {
@@ -53,11 +126,29 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (AuthService.IsInRole("Student")) await LoadGrades();
+        if (AuthService.IsInRole("Student"))
+            await LoadGrades();
     }
 
     private async Task LoadGrades()
     {
-        grades = await ApiClient.GetStudentGradesAsync(AuthService.CurrentUser.Id);
+        try
+        {
+            grades = await ApiClient.GetStudentGradesAsync(AuthService.CurrentUser.Id);
+        }
+        catch
+        {
+            // На випадок помилки мережі чи сервера залишаємо список пустим
+            grades = new List<GradeModel>();
+        }
+    }
+
+    // НОВИЙ МЕТОД: Обчислення середнього бала за допомогою LINQ
+    private double CalculateGpa()
+    {
+        if (grades == null || !grades.Any())
+            return 0;
+
+        return grades.Average(g => g.Value);
     }
 }

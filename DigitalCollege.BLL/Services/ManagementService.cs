@@ -17,11 +17,11 @@ namespace DigitalCollege.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
+        // --- МЕТОДИ ДЛЯ ВИКЛАДАЧІВ ---
         public void AddTeacher(TeacherDto teacherDto)
         {
             if (string.IsNullOrWhiteSpace(teacherDto.FullName))
                 throw new BusinessLogicException("ПІБ викладача не може бути порожнім.");
-
             _unitOfWork.Teachers.Add(new Teacher { FullName = teacherDto.FullName });
             _unitOfWork.Save();
         }
@@ -29,9 +29,7 @@ namespace DigitalCollege.BLL.Services
         public void UpdateTeacher(TeacherDto teacherDto)
         {
             var teacher = _unitOfWork.Teachers.GetById(teacherDto.Id);
-            if (teacher == null)
-                throw new BusinessLogicException("Викладача не знайдено.");
-
+            if (teacher == null) throw new BusinessLogicException("Викладача не знайдено.");
             teacher.FullName = teacherDto.FullName;
             _unitOfWork.Teachers.Update(teacher);
             _unitOfWork.Save();
@@ -40,33 +38,25 @@ namespace DigitalCollege.BLL.Services
         public void DeleteTeacher(int id)
         {
             var teacher = _unitOfWork.Teachers.GetById(id);
-            if (teacher == null)
-                throw new BusinessLogicException("Викладача не знайдено.");
-
+            if (teacher == null) throw new BusinessLogicException("Викладача не знайдено.");
             _unitOfWork.Teachers.Delete(id);
             _unitOfWork.Save();
         }
 
         public IEnumerable<TeacherDto> GetTeachers(string searchTerm = null, string sortBy = null)
         {
-            var data = _unitOfWork.Teachers.Find(t => 
-                string.IsNullOrWhiteSpace(searchTerm) || t.FullName.ToLower().Contains(searchTerm.ToLower()));
-
+            var data = _unitOfWork.Teachers.Find(t => string.IsNullOrWhiteSpace(searchTerm) || t.FullName.ToLower().Contains(searchTerm.ToLower()));
             var query = data.AsQueryable();
-
-            if (sortBy == "name_desc")
-                query = query.OrderByDescending(t => t.FullName);
-            else
-                query = query.OrderBy(t => t.FullName);
-
+            if (sortBy == "name_desc") query = query.OrderByDescending(t => t.FullName);
+            else query = query.OrderBy(t => t.FullName);
             return query.Select(t => new TeacherDto { Id = t.Id, FullName = t.FullName }).ToList();
         }
 
+        // --- МЕТОДИ ДЛЯ СТУДЕНТІВ ---
         public void AddStudent(StudentDto studentDto)
         {
             if (string.IsNullOrWhiteSpace(studentDto.FullName))
                 throw new BusinessLogicException("Ім'я студента обов'язкове.");
-
             _unitOfWork.Students.Add(new Student { FullName = studentDto.FullName, GroupId = studentDto.GroupId });
             _unitOfWork.Save();
         }
@@ -74,9 +64,7 @@ namespace DigitalCollege.BLL.Services
         public void UpdateStudent(StudentDto studentDto)
         {
             var student = _unitOfWork.Students.GetById(studentDto.Id);
-            if (student == null)
-                throw new BusinessLogicException("Студента не знайдено.");
-
+            if (student == null) throw new BusinessLogicException("Студента не знайдено.");
             student.FullName = studentDto.FullName;
             student.GroupId = studentDto.GroupId;
             _unitOfWork.Students.Update(student);
@@ -86,29 +74,23 @@ namespace DigitalCollege.BLL.Services
         public void DeleteStudent(int id)
         {
             var student = _unitOfWork.Students.GetById(id);
-            if (student == null)
-                throw new BusinessLogicException("Студента не знайдено.");
-
+            if (student == null) throw new BusinessLogicException("Студента не знайдено.");
             _unitOfWork.Students.Delete(id);
             _unitOfWork.Save();
         }
 
         public IEnumerable<StudentDto> GetStudents(string searchTerm = null, int? groupId = null, string sortBy = null)
         {
-            var data = _unitOfWork.Students.Find(s => 
+            var data = _unitOfWork.Students.Find(s =>
                 (string.IsNullOrWhiteSpace(searchTerm) || s.FullName.ToLower().Contains(searchTerm.ToLower())) &&
                 (!groupId.HasValue || s.GroupId == groupId.Value));
-
             var query = data.AsQueryable();
-
-            if (sortBy == "name_desc")
-                query = query.OrderByDescending(s => s.FullName);
-            else
-                query = query.OrderBy(s => s.FullName);
-
+            if (sortBy == "name_desc") query = query.OrderByDescending(s => s.FullName);
+            else query = query.OrderBy(s => s.FullName);
             return query.Select(s => new StudentDto { Id = s.Id, FullName = s.FullName, GroupId = s.GroupId }).ToList();
         }
 
+        // --- МЕТОДИ ДЛЯ ДИСЦИПЛІН ---
         public void AddDiscipline(DisciplineDto dto)
         {
             _unitOfWork.Disciplines.Add(new Discipline { Name = dto.Name, TeacherId = dto.TeacherId });
@@ -118,9 +100,7 @@ namespace DigitalCollege.BLL.Services
         public void UpdateDiscipline(DisciplineDto dto)
         {
             var discipline = _unitOfWork.Disciplines.GetById(dto.Id);
-            if (discipline == null)
-                throw new BusinessLogicException("Дисципліну не знайдено.");
-
+            if (discipline == null) throw new BusinessLogicException("Дисципліну не знайдено.");
             discipline.Name = dto.Name;
             discipline.TeacherId = dto.TeacherId;
             _unitOfWork.Disciplines.Update(discipline);
@@ -135,17 +115,53 @@ namespace DigitalCollege.BLL.Services
 
         public IEnumerable<DisciplineDto> GetDisciplines(string searchTerm = null, string sortBy = null)
         {
-            var data = _unitOfWork.Disciplines.Find(d => 
-                string.IsNullOrWhiteSpace(searchTerm) || d.Name.ToLower().Contains(searchTerm.ToLower()));
-
+            var data = _unitOfWork.Disciplines.Find(d => string.IsNullOrWhiteSpace(searchTerm) || d.Name.ToLower().Contains(searchTerm.ToLower()));
             var query = data.AsQueryable();
-
-            if (sortBy == "name_desc")
-                query = query.OrderByDescending(d => d.Name);
-            else
-                query = query.OrderBy(d => d.Name);
-
+            if (sortBy == "name_desc") query = query.OrderByDescending(d => d.Name);
+            else query = query.OrderBy(d => d.Name);
             return query.Select(d => new DisciplineDto { Id = d.Id, Name = d.Name, TeacherId = d.TeacherId }).ToList();
+        }
+
+        // --- 🌟 НОВІ МЕТОДИ ДЛЯ ГРУП (ПІД КЛЮЧ У СТИЛІ UNIT OF WORK) 🌟 ---
+        public void AddGroup(GroupDto groupDto)
+        {
+            if (string.IsNullOrWhiteSpace(groupDto.Name))
+                throw new BusinessLogicException("Назва групи не може бути порожньою.");
+
+            _unitOfWork.Groups.Add(new Group { Name = groupDto.Name });
+            _unitOfWork.Save();
+        }
+
+        public void UpdateGroup(GroupDto groupDto)
+        {
+            var group = _unitOfWork.Groups.GetById(groupDto.Id);
+            if (group == null)
+                throw new BusinessLogicException("Групу не знайдено.");
+
+            group.Name = groupDto.Name;
+            _unitOfWork.Groups.Update(group);
+            _unitOfWork.Save();
+        }
+
+        public void DeleteGroup(int id)
+        {
+            var group = _unitOfWork.Groups.GetById(id);
+            if (group == null)
+                throw new BusinessLogicException("Групу не знайдено.");
+
+            _unitOfWork.Groups.Delete(id);
+            _unitOfWork.Save();
+        }
+
+        public IEnumerable<GroupDto> GetGroups()
+        {
+            // Отримуємо всі групи через репозиторій
+            var data = _unitOfWork.Groups.GetAll();
+
+            // Сортуємо за алфавітом та мапимо в DTO
+            return data.OrderBy(g => g.Name)
+                       .Select(g => new GroupDto { Id = g.Id, Name = g.Name })
+                       .ToList();
         }
     }
 }

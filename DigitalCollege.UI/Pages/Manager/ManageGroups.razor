@@ -1,0 +1,152 @@
+﻿@page "/manager/groups"
+@inject ApiClient ApiClient
+@inject AuthService AuthService
+
+<PageTitle>Керування групами</PageTitle>
+
+@if (!AuthService.IsInRole("Manager"))
+{
+    <div class="alert alert-danger shadow">
+        <h3>Доступ обмежено!</h3>
+        <p>Тільки користувачі з роллю <strong>Менеджер</strong> мають право керувати групами.</p>
+        <a href="login" class="btn btn-outline-danger">Увійти з іншою роллю</a>
+    </div>
+}
+else
+{
+    <h1>Керування групами академії</h1>
+
+    <div class="card p-3 mb-4 bg-light shadow-sm">
+        <h4>@(isEditMode ? "Редагувати групу" : "Створити нову групу")</h4>
+
+        <EditForm Model="currentGroup" OnValidSubmit="SaveGroup">
+            <DataAnnotationsValidator />
+
+            <div class="row g-3">
+                <div class="col-md-9">
+                    <InputText class="form-control" @bind-Value="currentGroup.Name" placeholder="Назва групи (наприклад: КН-21)..." />
+                    <ValidationMessage For="() => currentGroup.Name" class="text-danger small mt-1" />
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Зберегти</button>
+                    @if (isEditMode)
+                    {
+                        <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Скасувати</button>
+                    }
+                </div>
+            </div>
+        </EditForm>
+    </div>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info">@message</div>
+    }
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 15%">ID</th>
+                <th>Назва групи</th>
+                <th style="width: 25%">Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (groups == null)
+            {
+                <tr><td colspan="3" class="text-center">Завантаження даних...</td></tr>
+            }
+            else if (!groups.Any())
+            {
+                <tr><td colspan="3" class="text-center text-muted">Жодної групи ще не створено.</td></tr>
+            }
+            else
+            {
+                @foreach (var g in groups)
+                {
+                    <tr>
+                        <td>@g.Id</td>
+                        <td><strong>@g.Name</strong></td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning me-2" @onclick="() => Edit(g)">Змінити</button>
+                            <button type="button" class="btn btn-sm btn-danger" @onclick="() => Delete(g.Id)">Видалити</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GroupModel> groups;
+    private GroupModel currentGroup = new();
+    private bool isEditMode = false;
+    private string message = "";
+
+    protected override async Task OnInitializedAsync() => await LoadGroups();
+
+    private async Task LoadGroups()
+    {
+        try
+        {
+            groups = await ApiClient.GetGroupsAsync();
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка завантаження: {ex.Message}";
+        }
+    }
+
+    private async Task SaveGroup()
+    {
+        try
+        {
+            if (isEditMode)
+            {
+                await ApiClient.UpdateGroupAsync(currentGroup);
+                message = "Групу успішно оновлено!";
+            }
+            else
+            {
+                await ApiClient.AddGroupAsync(currentGroup);
+                message = "Нову групу успішно додано!";
+            }
+
+            CancelEdit();
+            await LoadGroups();
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка збереження: {ex.Message}";
+        }
+    }
+
+    private void Edit(GroupModel g)
+    {
+        currentGroup = new() { Id = g.Id, Name = g.Name };
+        isEditMode = true;
+        message = "";
+    }
+
+    private void CancelEdit()
+    {
+        currentGroup = new();
+        isEditMode = false;
+    }
+
+    private async Task Delete(int id)
+    {
+        try
+        {
+            await ApiClient.DeleteGroupAsync(id);
+            message = "Групу видалено.";
+            CancelEdit();
+            await LoadGroups();
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка видалення: {ex.Message}";
+        }
+    }
+}

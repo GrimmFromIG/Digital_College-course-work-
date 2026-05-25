@@ -1,60 +1,298 @@
-@page "/teacher/grade"
+@page "/teacher/grades"
 @inject ApiClient ApiClient
 @inject AuthService AuthService
-@inject NavigationManager NavManager
 
-<PageTitle>Виставлення оцінок</PageTitle>
+<PageTitle>Журнал оцінювання</PageTitle>
 
 @if (!AuthService.IsInRole("Teacher"))
 {
-    <div class="alert alert-danger">Доступ заборонено. Ця сторінка лише для викладачів.</div>
+    <div class="alert alert-danger shadow">
+        <h3>Доступ обмежено!</h3>
+        <p>Ця сторінка доступна виключно для користувачів із роллю <strong>Викладач</strong>.</p>
+    </div>
 }
 else
 {
-    <h1>Журнал викладача: @AuthService.CurrentUser.FullName</h1>
+    <h1>Виставлення оцінок студентам</h1>
 
-    <div class="card p-3 mb-4 shadow-sm">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">ID Студента</label>
-                <input type="number" class="form-control" @bind="newGrade.StudentId" />
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">ID Дисципліни</label>
-                <input type="number" class="form-control" @bind="newGrade.DisciplineId" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Оцінка</label>
-                <input type="number" class="form-control" @bind="newGrade.Value" />
-            </div>
-            <div class="col-md-4 d-flex align-items-end">
-                <button class="btn btn-success w-100" @onclick="SubmitGrade">Поставити оцінку</button>
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @message
+            <button type="button" class="btn-close" @onclick="() => message = string.Empty" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4 mb-4">
+        <!-- Ліва колонка: Валідована форма -->
+        <div class="col-lg-8">
+            <EditForm Model="newGrade" OnValidSubmit="SubmitGrade">
+                <DataAnnotationsValidator />
+
+                <div class="card p-4 shadow-sm bg-light h-100">
+                    <h5 class="card-title mb-3 text-secondary">Нова оцінка</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Студент</label>
+                            <InputSelect class="form-select" @bind-Value="newGrade.StudentId">
+                                <option value="0">-- Оберіть студента --</option>
+                                @if (studentsList != null)
+                                {
+                                    @foreach (var s in studentsList)
+                                    {
+                                        <option value="@s.Id">@s.FullName (ID: @s.Id)</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => newGrade.StudentId" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Дисципліна</label>
+                            <InputSelect class="form-select" @bind-Value="newGrade.DisciplineId">
+                                <option value="0">-- Оберіть дисципліну --</option>
+                                @if (disciplinesList != null)
+                                {
+                                    @foreach (var d in disciplinesList)
+                                    {
+                                        <option value="@d.Id">@d.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="() => newGrade.DisciplineId" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-bold">Бали (0-100)</label>
+                            <InputNumber class="form-control" @bind-Value="newGrade.Value" placeholder="Введіть оцінку від 0 до 100" />
+                            <ValidationMessage For="() => newGrade.Value" class="text-danger small mt-1" />
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                                <i class="bi bi-check-circle-fill"></i> Поставити
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+
+        <!-- Права колонка: Середній бал за предметами поточного обраного студента -->
+        <div class="col-lg-4">
+            <div class="card p-4 shadow-sm h-100 border-start border-primary border-4 bg-white">
+                <h5 class="card-title mb-3 text-secondary"><i class="bi bi-bar-chart-fill"></i> Середній бал студента за предметами</h5>
+                @if (disciplinesList == null)
+                {
+                    <p class="text-muted small">Завантаження дисциплін...</p>
+                }
+                else if (selectedStudentId == 0)
+                {
+                    <p class="text-muted small">Оберіть студента нижче, щоб побачити його успішність за предметами.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var d in disciplinesList)
+                        {
+                            var avg = GetDisciplineAverageForSelectedStudent(d.Id);
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 bg-transparent">
+                                <span class="text-truncate fw-medium" style="max-width: 170px;">@d.Name</span>
+                                <span class="badge rounded-pill fs-6 @(avg >= 74 ? "bg-success" : avg >= 60 ? "bg-warning text-dark" : avg > 0 ? "bg-danger" : "bg-secondary")">
+                                    @(avg > 0 ? avg.ToString("F1") : "—")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(message))
+    <hr class="my-4" />
+
+    <!-- Перегляд журналу конкретного студента -->
+    <div class="row g-3 align-items-center mb-4">
+        <div class="col-md-5">
+            <h4 class="m-0">Перегляд оцінок студента</h4>
+        </div>
+        <div class="col-md-7">
+            <select class="form-select border-primary" @onchange="OnStudentSelectedForView">
+                <option value="0">-- Оберіть студента для перегляду журналу --</option>
+                @if (studentsList != null)
+                {
+                    @foreach (var s in studentsList)
+                    {
+                        <option value="@s.Id">@s.FullName</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped align-middle bg-white shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Дисципліна</th>
+                <th style="width: 20%" class="text-center">Бал</th>
+                <th style="width: 30%">Дата виставлення</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (selectedStudentId == 0)
+            {
+                <tr><td colspan="3" class="text-center text-muted py-3">Оберіть студента зі списку вище, щоб відобразити його оцінки.</td></tr>
+            }
+            else if (viewGrades == null)
+            {
+                <tr><td colspan="3" class="text-center py-3">Завантаження оцінок...</td></tr>
+            }
+            else if (!viewGrades.Any())
+            {
+                <tr><td colspan="3" class="text-center text-muted py-3">У цього студента ще немає жодної оцінки.</td></tr>
+            }
+            else
+            {
+                @foreach (var grade in viewGrades)
+                {
+                    <tr>
+                        <td><strong>@grade.DisciplineName</strong></td>
+                        <td class="text-center">
+                            <span class="badge @(grade.Value >= 74 ? "bg-success" : grade.Value >= 60 ? "bg-warning" : "bg-danger") fs-6 px-3">
+                                @grade.Value
+                            </span>
+                        </td>
+                        <td class="text-muted">@grade.DateAssigned.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <!-- Розрахунок GPA Студента -->
+    @if (viewGrades != null && viewGrades.Any())
     {
-        <div class="alert alert-info">@message</div>
+        var gpa = CalculateGpa();
+        <div class="d-flex justify-content-end mt-3">
+            <div class="card p-3 shadow-sm bg-white border-start border-success border-4" style="min-width: 280px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1 text-uppercase small fw-bold">Загальний середній бал (GPA)</h6>
+                        <h3 class="m-0 fw-bold text-dark">@gpa.ToString("F1")</h3>
+                    </div>
+                    <div class="fs-1 text-success"><i class="bi bi-mortarboard-fill"></i></div>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar @(gpa >= 74 ? "bg-success" : gpa >= 60 ? "bg-warning" : "bg-danger")"
+                         role="progressbar" style="width: @gpa%" aria-valuenow="@gpa" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
     }
 }
 
 @code {
     private CreateGradeModel newGrade = new();
+    private List<StudentModel> studentsList;
+    private List<DisciplineModel> disciplinesList;
+    private List<GradeModel> viewGrades;
+
+    private int selectedStudentId = 0;
     private string message = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("Teacher"))
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            studentsList = await ApiClient.GetStudentsAsync();
+            disciplinesList = await ApiClient.GetDisciplinesAsync();
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка завантаження даних: {ex.Message}";
+        }
+    }
 
     private async Task SubmitGrade()
     {
         try
         {
-            newGrade.TeacherId = AuthService.CurrentUser.Id;
+            newGrade.TeacherId = AuthService.CurrentUser?.Id ?? 0;
             await ApiClient.AssignGradeAsync(newGrade);
+
             message = "Оцінку успішно виставлено!";
+
+            // Зберігаємо ID студента, якого зараз переглядаємо
+            int currentViewId = selectedStudentId;
+
+            // Якщо викладач щойно поставив оцінку саме тому студенту, чий журнал зараз відкритий,
+            // або якщо він ставив оцінку через форму — оновлюємо таблицю для відображення змін
+            if (currentViewId == 0 && newGrade.StudentId > 0)
+            {
+                currentViewId = newGrade.StudentId;
+                selectedStudentId = currentViewId;
+            }
+
+            // Очищення форми
             newGrade = new CreateGradeModel();
+
+            if (currentViewId != 0)
+            {
+                await RefreshGradesTable(currentViewId);
+            }
         }
         catch (Exception ex)
         {
-            message = $"Помилка: {ex.Message}";
+            message = $"Помилка під час збереження: {ex.Message}";
         }
+    }
+
+    private async Task OnStudentSelectedForView(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int id))
+        {
+            selectedStudentId = id;
+            await RefreshGradesTable(id);
+        }
+    }
+
+    private async Task RefreshGradesTable(int studentId)
+    {
+        if (studentId == 0)
+        {
+            viewGrades = null;
+            return;
+        }
+        try
+        {
+            viewGrades = await ApiClient.GetStudentGradesAsync(studentId);
+        }
+        catch (Exception ex)
+        {
+            message = $"Помилка отримання даних журналу: {ex.Message}";
+        }
+    }
+
+    private double CalculateGpa()
+    {
+        if (viewGrades == null || !viewGrades.Any()) return 0;
+        return viewGrades.Average(g => g.Value);
+    }
+
+    // БЕЗПЕЧНИЙ МЕТОД: Рахує середнє по предметах конкретного обраного студента з наявного масиву
+    private double GetDisciplineAverageForSelectedStudent(int disciplineId)
+    {
+        if (viewGrades == null || !viewGrades.Any(g => g.DisciplineId == disciplineId))
+            return 0;
+
+        return viewGrades.Where(g => g.DisciplineId == disciplineId).Average(g => g.Value);
     }
 }
