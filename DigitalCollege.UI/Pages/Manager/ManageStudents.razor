@@ -115,13 +115,12 @@
     private int? FilterGroupId;
     private string SortBy = "";
 
-    // 1. ДОДАНО ЗМІННУ ДЛЯ ГРУП
     private List<GroupModel> groupsList;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadStudents();
-        await LoadGroups(); // 2. ЗАВАНТАЖУЄМО ГРУПИ ПРИ ВІДКРИТТІ СТОРІНКИ
+        await LoadGroups(); 
     }
 
     private async Task LoadStudents()
@@ -137,7 +136,6 @@
         }
     }
 
-    // 3. ДОДАНО МЕТОД ДЛЯ ЗАВАНТАЖЕННЯ ГРУП
     private async Task LoadGroups()
     {
         try
