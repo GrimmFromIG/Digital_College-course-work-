@@ -5,6 +5,9 @@ build_property.EnableTrimAnalyzer = false
 build_property.IncludeAllContentForSelfExtract = 
 build_property.VerifyReferenceTrimCompatibility = 
 build_property.VerifyReferenceAotCompatibility = 
+build_property.MudDebugAnalyzer = 
+build_property.MudAllowedAttributePattern = 
+build_property.MudAllowedAttributeList = 
 build_property.TargetFramework = net10.0
 build_property.TargetFrameworkIdentifier = .NETCoreApp
 build_property.TargetFrameworkVersion = v10.0
@@ -14,81 +17,80 @@ build_property.ProjectTypeGuids =
 build_property.InvariantGlobalization = false
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
-build_property.EntryPointFilePath = 
 build_property._SupportedPlatformList = browser
 build_property.RootNamespace = DigitalCollege.UI
 build_property.RootNamespace = DigitalCollege.UI
-build_property.ProjectDir = C:\Users\User\source\repos\Digital_College-course-work-\DigitalCollege.UI\
+build_property.ProjectDir = C:\VScode\Digital_College-course-work-\DigitalCollege.UI\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = false
-build_property.RazorLangVersion = 10.0
+build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\User\source\repos\Digital_College-course-work-\DigitalCollege.UI
+build_property.MSBuildProjectDirectory = C:\VScode\Digital_College-course-work-\DigitalCollege.UI
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/App.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Index.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Login.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageDisciplines.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageDisciplines.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlclxNYW5hZ2VEaXNjaXBsaW5lcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageGroups.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageGroups.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlclxNYW5hZ2VHcm91cHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageStudents.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageStudents.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlclxNYW5hZ2VTdHVkZW50cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageTeacher.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Manager/ManageTeacher.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuYWdlclxNYW5hZ2VUZWFjaGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/DisciplineList.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/DisciplineList.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVibGljXERpc2NpcGxpbmVMaXN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/Index.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVibGljXEluZGV4LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/TeachersList.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Public/TeachersList.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHVibGljXFRlYWNoZXJzTGlzdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Student/MyGrades.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Student/MyGrades.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3R1ZGVudFxNeUdyYWRlcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Pages/Teacher/GradeStudents.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Pages/Teacher/GradeStudents.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGVhY2hlclxHcmFkZVN0dWRlbnRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Shared/Loader.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Shared/Loader.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExvYWRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Shared/MainLayout.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/Shared/NavMenu.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/User/source/repos/Digital_College-course-work-/DigitalCollege.UI/_Imports.razor]
+[C:/VScode/Digital_College-course-work-/DigitalCollege.UI/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

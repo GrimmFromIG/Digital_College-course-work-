@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
     "net10.0": {
       "Azure.Core/1.47.1": {
@@ -3067,24 +3067,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\gamer\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.Tests\\DigitalCollege.Tests.csproj",
+      "projectUniqueName": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.Tests\\DigitalCollege.Tests.csproj",
       "projectName": "DigitalCollege.Tests",
-      "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.Tests\\DigitalCollege.Tests.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.Tests\\obj\\",
+      "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.Tests\\DigitalCollege.Tests.csproj",
+      "packagesPath": "C:\\Users\\gamer\\.nuget\\packages\\",
+      "outputPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.Tests\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3096,14 +3091,13 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
-              "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj"
+            "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
+              "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj"
             },
-            "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
-              "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
+            "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
+              "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
             }
           }
         }
@@ -3118,11 +3112,10 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net10.0": {
-        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": {
@@ -3162,7 +3155,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

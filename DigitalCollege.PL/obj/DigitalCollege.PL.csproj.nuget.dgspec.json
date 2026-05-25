@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj": {}
+    "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
+    "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj",
+        "projectUniqueName": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj",
         "projectName": "DigitalCollege.BLL",
-        "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\obj\\",
+        "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj",
+        "packagesPath": "C:\\Users\\gamer\\.nuget\\packages\\",
+        "outputPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -30,11 +26,10 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
-                "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
+              "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
+                "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
               }
             }
           }
@@ -49,11 +44,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "imports": [
             "net461",
@@ -71,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -349,21 +343,17 @@
         }
       }
     },
-    "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
+    "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj",
+        "projectUniqueName": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj",
         "projectName": "DigitalCollege.DAL",
-        "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\obj\\",
+        "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj",
+        "packagesPath": "C:\\Users\\gamer\\.nuget\\packages\\",
+        "outputPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -375,7 +365,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -390,11 +379,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
@@ -426,7 +414,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -704,21 +692,17 @@
         }
       }
     },
-    "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj": {
+    "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj",
+        "projectUniqueName": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj",
         "projectName": "DigitalCollege.PL",
-        "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.PL\\obj\\",
+        "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.PL\\DigitalCollege.PL.csproj",
+        "packagesPath": "C:\\Users\\gamer\\.nuget\\packages\\",
+        "outputPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.PL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\gamer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -730,14 +714,13 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
-                "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj"
+              "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj": {
+                "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.BLL\\DigitalCollege.BLL.csproj"
               },
-              "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
-                "projectPath": "C:\\Users\\User\\source\\repos\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
+              "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj": {
+                "projectPath": "C:\\VScode\\Digital_College-course-work-\\DigitalCollege.DAL\\DigitalCollege.DAL.csproj"
               }
             }
           }
@@ -752,11 +735,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
@@ -797,7 +779,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
