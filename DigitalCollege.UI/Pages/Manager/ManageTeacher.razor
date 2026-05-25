@@ -1,55 +1,76 @@
 @page "/manager/teachers"
 @inject ApiClient ApiClient
 @inject AuthService AuthService
+@inject ISnackbar Snackbar
 
 <PageTitle>Керування викладачами</PageTitle>
 
 @if (!AuthService.IsInRole("Manager"))
 {
-    <div class="alert alert-danger shadow">
-        <h3>Доступ обмежено!</h3>
-        <p>Тільки користувачі з роллю <strong>Менеджер</strong> мають право редагувати дані викладачів.</p>
-        <a href="login" class="btn btn-outline-danger">Увійти з іншою роллю</a>
-    </div>
+    <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Elevation="3" Class="my-4">
+        <MudText Typo="Typo.h6">Доступ обмежено!</MudText>
+        <MudText>Тільки користувачі з роллю <strong>Менеджер</strong> мають право редагувати дані викладачів.</MudText>
+        <MudButton Variant="Variant.Outlined" Color="Color.Inherit" Link="login" Class="mt-2">
+            Увійти з іншою роллю
+        </MudButton>
+    </MudAlert>
 }
 else
 {
-    <h1>Керування викладачами (Режим Менеджера)</h1>
+    <MudText Typo="Typo.h4" Class="mb-4">Керування викладачами (Режим Менеджера)</MudText>
 
-    <div class="card p-3 mb-4 bg-light">
-        <h4>@(isEditMode ? "Редагування" : "Створення")</h4>
-        <div class="row g-3">
-            <div class="col-md-9">
-                <input type="text" class="form-control" @bind="currentTeacher.FullName" placeholder="Введіть ПІБ..." />
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100" @onclick="SaveTeacher">Зберегти</button>
-            </div>
-        </div>
-    </div>
+    <MudCard Elevation="3" Class="mb-4">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h6">@(isEditMode ? "Редагування викладача" : "Створення нового викладача")</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudGrid AlignItems="AlignItems.Center">
+                <MudItem xs="12" md="9">
+                    <MudTextField @bind-Value="currentTeacher.FullName"
+                                  Label="ПІБ викладача"
+                                  Placeholder="Введіть ПІБ..."
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem xs="12" md="3" Class="d-flex gap-2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveTeacher" Class="w-100">
+                        Зберегти
+                    </MudButton>
+                    @if (isEditMode)
+                    {
+                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="CancelEdit">
+                            Скасувати
+                        </MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
 
-    <table class="table table-bordered mt-3">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>ПІБ викладача</th>
-                <th>Дії</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var t in teachers ?? new())
-            {
-                <tr>
-                    <td>@t.Id</td>
-                    <td>@t.FullName</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" @onclick="() => Edit(t)">Змінити</button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => Delete(t.Id)">Видалити</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudTable Items="@teachers" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@(teachers == null)" LoadingProgressColor="Color.Info" Elevation="3">
+        <HeaderContent>
+            <MudTh>ID</MudTh>
+            <MudTh>ПІБ викладача</MudTh>
+            <MudTh>Дії</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="ID">@context.Id</MudTd>
+            <MudTd DataLabel="ПІБ викладача">@context.FullName</MudTd>
+            <MudTd DataLabel="Дії">
+                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" OnClick="() => Edit(context)" Class="mr-2">
+                    Змінити
+                </MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Delete(context.Id)">
+                    Видалити
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="py-4 text-muted">Жодного викладача ще не додано.</MudText>
+        </NoRecordsContent>
+    </MudTable>
 }
 
 @code {
@@ -57,19 +78,82 @@ else
     private TeacherModel currentTeacher = new();
     private bool isEditMode = false;
 
-    protected override async Task OnInitializedAsync() => await Load();
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthService.IsInRole("Manager"))
+        {
+            await LoadTeachers();
+        }
+    }
 
-    private async Task Load() => teachers = await ApiClient.GetTeachersAsync();
+    private async Task LoadTeachers()
+    {
+        try
+        {
+            teachers = await ApiClient.GetTeachersAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка завантаження списку викладачів.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
+    }
 
     private async Task SaveTeacher()
     {
-        if (isEditMode) await ApiClient.UpdateTeacherAsync(currentTeacher);
-        else await ApiClient.AddTeacherAsync(currentTeacher);
-        currentTeacher = new();
-        isEditMode = false;
-        await Load();
+        if (string.IsNullOrWhiteSpace(currentTeacher.FullName))
+        {
+            Snackbar.Add("Будь ласка, введіть ПІБ викладача.", Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            if (isEditMode)
+            {
+                await ApiClient.UpdateTeacherAsync(currentTeacher);
+                Snackbar.Add("Дані викладача оновлено!", Severity.Success);
+            }
+            else
+            {
+                await ApiClient.AddTeacherAsync(currentTeacher);
+                Snackbar.Add("Нового викладача успішно додано!", Severity.Success);
+            }
+
+            CancelEdit();
+            await LoadTeachers();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка збереження.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
     }
 
-    private void Edit(TeacherModel t) { currentTeacher = new() { Id = t.Id, FullName = t.FullName }; isEditMode = true; }
-    private async Task Delete(int id) { await ApiClient.DeleteTeacherAsync(id); await Load(); }
+    private void Edit(TeacherModel t)
+    {
+        currentTeacher = new() { Id = t.Id, FullName = t.FullName };
+        isEditMode = true;
+    }
+
+    private void CancelEdit()
+    {
+        currentTeacher = new();
+        isEditMode = false;
+    }
+
+    private async Task Delete(int id)
+    {
+        try
+        {
+            await ApiClient.DeleteTeacherAsync(id);
+            Snackbar.Add("Викладача видалено.", Severity.Info);
+            await LoadTeachers();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Помилка видалення.", Severity.Error);
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
