@@ -1,6 +1,7 @@
 using DigitalCollege.BLL.DTOs;
 using System.Collections.Generic;
 
+
 namespace DigitalCollege.BLL.Interfaces
 {
     public interface IManagementService
@@ -19,5 +20,10 @@ namespace DigitalCollege.BLL.Interfaces
         void UpdateDiscipline(DisciplineDto disciplineDto);
         void DeleteDiscipline(int id);
         IEnumerable<DisciplineDto> GetDisciplines(string searchTerm = null, string sortBy = null);
+
+        IEnumerable<GroupDto> GetGroups();
+        void AddGroup(GroupDto groupDto);
+        void UpdateGroup(GroupDto groupDto);
+        void DeleteGroup(int id);
     }
 }

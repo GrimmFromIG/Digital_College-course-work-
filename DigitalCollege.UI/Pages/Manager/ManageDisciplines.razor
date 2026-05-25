@@ -10,11 +10,23 @@
             <input type="text" class="form-control" @bind="currentDiscipline.Name" placeholder="Назва дисципліни" />
         </div>
         <div class="col-md-4">
-            <input type="number" class="form-control" @bind="currentDiscipline.TeacherId" placeholder="ID викладача" />
+            <select class="form-select" @bind="currentDiscipline.TeacherId">
+                <option value="0">-- Оберіть викладача --</option>
+                @if (teachersList != null)
+                {
+                    @foreach (var t in teachersList)
+                    {
+                        <option value="@t.Id">@t.FullName</option>
+                    }
+                }
+            </select>
         </div>
         <div class="col-md-3">
             <button class="btn btn-primary w-100" @onclick="SaveDiscipline">Зберегти</button>
-            @if (isEditMode) { <button class="btn btn-link" @onclick="CancelEdit">Скасувати</button> }
+            @if (isEditMode)
+            {
+                <button class="btn btn-link" @onclick="CancelEdit">Скасувати</button>
+            }
         </div>
     </div>
 </div>
@@ -36,38 +48,59 @@
         <tr>
             <th>ID</th>
             <th>Назва</th>
-            <th>ID Викладача</th>
+            <th>Викладач</th>
             <th>Дії</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var d in disciplines ?? new())
+        @if (disciplines == null)
         {
-            <tr>
-                <td>@d.Id</td>
-                <td>@d.Name</td>
-                <td>@d.TeacherId</td>
-                <td>
-                    <button class="btn btn-sm btn-warning" @onclick="() => EditDiscipline(d)">Змінити</button>
-                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteDiscipline(d.Id)">Видалити</button>
-                </td>
-            </tr>
+            <tr><td colspan="4" class="text-center">Завантаження...</td></tr>
+        }
+        else
+        {
+            @foreach (var d in disciplines)
+            {
+                <tr>
+                    <td>@d.Id</td>
+                    <td>@d.Name</td>
+                    <td>
+                        @(teachersList?.FirstOrDefault(t => t.Id == d.TeacherId)?.FullName ?? $"ID: {d.TeacherId}")
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => EditDiscipline(d)">Змінити</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteDiscipline(d.Id)">Видалити</button>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
 
 @code {
     private List<DisciplineModel> disciplines;
+    private List<TeacherModel> teachersList;
     private DisciplineModel currentDiscipline = new();
     private bool isEditMode = false;
     private string SearchTerm = "";
     private string SortBy = "";
 
-    protected override async Task OnInitializedAsync() => await LoadDisciplines();
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDisciplines();
+        await LoadTeachers();
+    }
+
     private async Task LoadDisciplines() => disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy);
+    private async Task LoadTeachers() => teachersList = await ApiClient.GetTeachersAsync();
 
     private async Task SaveDiscipline()
     {
+        if (currentDiscipline.TeacherId == 0 || string.IsNullOrWhiteSpace(currentDiscipline.Name))
+        {
+            return; // Проста валідація на порожні поля
+        }
+
         if (isEditMode) await ApiClient.UpdateDisciplineAsync(currentDiscipline);
         else await ApiClient.AddDisciplineAsync(currentDiscipline);
         CancelEdit();
