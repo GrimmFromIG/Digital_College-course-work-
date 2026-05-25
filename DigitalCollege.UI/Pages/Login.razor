@@ -1,6 +1,7 @@
 @page "/login"
 @inject AuthService AuthService
 @inject NavigationManager NavManager
+@inject ISnackbar Snackbar
 
 <PageTitle>Вхід у систему</PageTitle>
 
@@ -9,60 +10,95 @@
         <MudCardHeader Class="mud-theme-primary rounded-t-lg py-4">
             <CardHeaderContent>
                 <MudText Typo="Typo.h5" Class="font-weight-bold text-white align-center d-flex justify-center">
-                    <MudIcon Icon="@Icons.Material.Filled.Login" Class="mr-2" />
-                    Вхід у систему
+                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-2" />
+                    Авторизація
                 </MudText>
             </CardHeaderContent>
         </MudCardHeader>
 
         <MudCardContent Class="pa-6">
-            <MudText Typo="Typo.body1" Class="text-muted mb-6 text-center">
-                Оберіть роль для тестування системи:
-            </MudText>
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
 
-            <MudStack Spacing="3">
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           Size="Size.Large"
-                           StartIcon="@Icons.Material.Filled.AdminPanelSettings"
-                           OnClick='() => DoLogin("Manager", 1, "Адмін Менеджер")'>
-                    Увійти як Менеджер
+                <MudTextField @bind-Value="loginModel.Email" 
+                              Label="Електронна пошта" 
+                              Variant="Variant.Outlined" 
+                              Margin="Margin.Dense"
+                              Class="mb-4"
+                              For="@(() => loginModel.Email)"
+                              Adornment="Adornment.Start" 
+                              AdornmentIcon="@Icons.Material.Filled.Email" />
+
+                <MudTextField @bind-Value="loginModel.Password" 
+                              Label="Пароль" 
+                              Variant="Variant.Outlined" 
+                              Margin="Margin.Dense"
+                              Class="mb-6"
+                              InputType="InputType.Password"
+                              For="@(() => loginModel.Password)"
+                              Adornment="Adornment.Start" 
+                              AdornmentIcon="@Icons.Material.Filled.Key" />
+
+                <MudButton ButtonType="ButtonType.Submit" 
+                           Variant="Variant.Filled" 
+                           Color="Color.Primary" 
+                           Size="Size.Large" 
+                           FullWidth="true" 
+                           Class="mb-3 font-weight-bold">
+                    Увійти в систему
                 </MudButton>
 
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Success"
-                           Size="Size.Large"
-                           StartIcon="@Icons.Material.Filled.School"
-                           OnClick='() => DoLogin("Teacher", 1, "Олександр Петрович")'>
-                    Увійти як Викладач (ID: 1)
-                </MudButton>
-
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Info"
-                           Size="Size.Large"
-                           StartIcon="@Icons.Material.Filled.Person"
-                           OnClick='() => DoLogin("Student", 1, "Богдан Петрощук")'>
-                    Увійти як Студент (ID: 1)
-                </MudButton>
-
-                <MudDivider Class="my-2" />
-
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Default"
-                           Size="Size.Large"
-                           StartIcon="@Icons.Material.Filled.NoAccounts"
-                           OnClick='() => DoLogin("Unregistered", 0, "Гість")'>
+                <MudButton Variant="Variant.Text" 
+                           Color="Color.Default" 
+                           FullWidth="true"
+                           OnClick="LoginAsGuest">
                     Продовжити як Гість
                 </MudButton>
-            </MudStack>
+            </EditForm>
         </MudCardContent>
     </MudCard>
+
+    <MudAlert Severity="Severity.Info" Class="mt-6">
+        <MudText Typo="Typo.subtitle2" Class="font-weight-bold">Тестові акаунти (Email / Пароль):</MudText>
+        <ul style="margin-bottom: 0;">
+            <li>Менеджер: <b>admin@college.ua</b> / <b>admin</b></li>
+            <li>Викладач: <b>teacher@college.ua</b> / <b>teacher</b></li>
+            <li>Студент: <b>student@college.ua</b> / <b>student</b></li>
+        </ul>
+    </MudAlert>
 </MudContainer>
 
 @code {
-    private void DoLogin(string role, int id, string name)
+    private LoginRequest loginModel = new();
+
+    private async Task HandleLogin()
     {
-        AuthService.Login(role, id, name);
-        NavManager.NavigateTo("/");
+        bool isSuccess = await AuthService.LoginWithCredentialsAsync(loginModel.Email, loginModel.Password);
+
+        if (isSuccess)
+        {
+            Snackbar.Add($"Вітаємо, {AuthService.CurrentUser.FullName}!", Severity.Success);
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            Snackbar.Add("Невірний email або пароль!", Severity.Error);
+        }
+    }
+
+    private async Task LoginAsGuest()
+    {
+        await AuthService.LoginAsGuestAsync();
+        NavManager.NavigateTo("/public");
+    }
+
+    public class LoginRequest
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть Email")]
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Некоректний формат пошти")]
+        public string Email { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть пароль")]
+        public string Password { get; set; }
     }
 }

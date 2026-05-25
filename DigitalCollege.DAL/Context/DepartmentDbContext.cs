@@ -10,6 +10,7 @@ namespace DigitalCollege.DAL.Context
         public DbSet<Group> Groups { get; set; }
         public DbSet<Discipline> Disciplines { get; set; }
         public DbSet<Grade> Grades { get; set; }
+        public DbSet<User> Users { get; set; } 
 
         public DepartmentDbContext(DbContextOptions<DepartmentDbContext> options) : base(options)
         {

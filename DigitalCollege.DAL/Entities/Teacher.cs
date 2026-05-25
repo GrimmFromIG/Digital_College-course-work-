@@ -8,5 +8,6 @@ namespace DigitalCollege.DAL.Entities
         public string FullName { get; set; }
 
         public ICollection<Discipline> Disciplines { get; set; }
+        public User User { get; set; }
     }
 }

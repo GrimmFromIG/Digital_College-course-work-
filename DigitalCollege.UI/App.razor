@@ -17,8 +17,14 @@
 </CascadingValue>
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         AuthService.OnChange += StateHasChanged;
+        await AuthService.InitializeAsync();
+    }
+
+    public void Dispose()
+    {
+        AuthService.OnChange -= StateHasChanged;
     }
 }

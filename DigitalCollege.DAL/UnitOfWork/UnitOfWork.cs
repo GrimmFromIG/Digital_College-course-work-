@@ -14,6 +14,7 @@ namespace DigitalCollege.DAL.UnitOfWork
         private IRepository<Group> _groupRepository;
         private IRepository<Discipline> _disciplineRepository;
         private IRepository<Grade> _gradeRepository;
+        private IRepository<User> _userRepository;
 
         public UnitOfWork(DepartmentDbContext context)
         {
@@ -25,6 +26,7 @@ namespace DigitalCollege.DAL.UnitOfWork
         public IRepository<Group> Groups => _groupRepository ??= new Repository<Group>(_context);
         public IRepository<Discipline> Disciplines => _disciplineRepository ??= new Repository<Discipline>(_context);
         public IRepository<Grade> Grades => _gradeRepository ??= new Repository<Grade>(_context);
+        public IRepository<User> Users => _userRepository ??= new Repository<User>(_context);
 
         public void Save()
         {

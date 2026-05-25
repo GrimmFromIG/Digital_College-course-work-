@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using DigitalCollege.BLL.Interfaces;
-using DigitalCollege.BLL.DTOs; // Виправляє помилку CS0246
+using DigitalCollege.BLL.DTOs;
 
 namespace DigitalCollege.PL.Controllers
 {
     [ApiController]
     [Route("api/management")]
+    [Authorize(Roles = "Manager")]
     public class GroupsController : ControllerBase
     {
         private readonly IManagementService _managementService;
@@ -16,7 +18,6 @@ namespace DigitalCollege.PL.Controllers
             _managementService = managementService;
         }
 
-        // GET: api/management/groups
         [HttpGet("groups")]
         public IActionResult GetAll()
         {
@@ -24,7 +25,6 @@ namespace DigitalCollege.PL.Controllers
             return Ok(groups);
         }
 
-        // POST: api/management/group
         [HttpPost("group")]
         public IActionResult Create([FromBody] GroupDto groupDto)
         {
@@ -32,7 +32,6 @@ namespace DigitalCollege.PL.Controllers
             return Ok();
         }
 
-        // PUT: api/management/group
         [HttpPut("group")]
         public IActionResult Update([FromBody] GroupDto groupDto)
         {
@@ -40,7 +39,6 @@ namespace DigitalCollege.PL.Controllers
             return Ok();
         }
 
-        // DELETE: api/management/group/{id}
         [HttpDelete("group/{id}")]
         public IActionResult Delete(int id)
         {

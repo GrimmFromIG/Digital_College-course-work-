@@ -57,10 +57,10 @@
 
     protected override void OnInitialized() => AuthService.OnChange += StateHasChanged;
 
-    private void Logout()
+    private async Task Logout()
     {
-        AuthService.Logout();
-        NavManager.NavigateTo("login");
+        await AuthService.LogoutAsync();
+        NavManager.NavigateTo("/login");
     }
 
     public void Dispose() => AuthService.OnChange -= StateHasChanged;

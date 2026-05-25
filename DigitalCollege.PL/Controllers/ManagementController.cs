@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using DigitalCollege.BLL.Interfaces;
 using DigitalCollege.BLL.DTOs;
 using DigitalCollege.BLL.Exceptions;
@@ -7,6 +8,7 @@ namespace DigitalCollege.PL.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Manager")]
     public class ManagementController : ControllerBase
     {
         private readonly IManagementService _managementService;

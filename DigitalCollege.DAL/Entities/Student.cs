@@ -11,5 +11,6 @@ namespace DigitalCollege.DAL.Entities
         public Group Group { get; set; }
 
         public ICollection<Grade> Grades { get; set; }
+        public User User { get; set; }
     }
 }

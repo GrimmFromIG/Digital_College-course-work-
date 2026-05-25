@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DigitalCollege.UI.Models;
 
@@ -8,6 +9,28 @@ namespace DigitalCollege.UI.Services
         private readonly HttpClient _http;
 
         public ApiClient(HttpClient http) => _http = http;
+
+        public void SetToken(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _http.DefaultRequestHeaders.Authorization = null;
+            }
+        }
+
+        public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
+        {
+            var response = await _http.PostAsJsonAsync("api/auth/login", loginDto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+            }
+            return null;
+        }
 
         public async Task<List<TeacherModel>> GetTeachersAsync(string s = null, string o = null) =>
             await _http.GetFromJsonAsync<List<TeacherModel>>($"api/management/teachers?searchTerm={s}&sortBy={o}");
@@ -21,7 +44,6 @@ namespace DigitalCollege.UI.Services
         public async Task DeleteTeacherAsync(int id) =>
             await _http.DeleteAsync($"api/management/teacher/{id}");
 
-
         public async Task<List<StudentModel>> GetStudentsAsync(string s = null, int? g = null, string o = null) =>
             await _http.GetFromJsonAsync<List<StudentModel>>($"api/management/students?searchTerm={s}&groupId={g}&sortBy={o}");
 
@@ -33,7 +55,6 @@ namespace DigitalCollege.UI.Services
 
         public async Task DeleteStudentAsync(int id) =>
             await _http.DeleteAsync($"api/management/student/{id}");
-
 
         public async Task<List<DisciplineModel>> GetDisciplinesAsync(string s = null, string o = null) =>
             await _http.GetFromJsonAsync<List<DisciplineModel>>($"api/management/disciplines?searchTerm={s}&sortBy={o}");
