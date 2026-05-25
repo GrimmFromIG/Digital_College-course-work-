@@ -1,6 +1,6 @@
 @page "/manager/disciplines"
 @inject ApiClient ApiClient
-@inject ISnackbar Snackbar // Сервіс MudBlazor для красивих сповіщень
+@inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h4" Class="mb-4">Керування дисциплінами</MudText>
 
@@ -109,7 +109,7 @@
     {
         if (currentDiscipline.TeacherId == 0 || string.IsNullOrWhiteSpace(currentDiscipline.Name))
         {
-            return; // Проста валідація на порожні поля
+            return;
         }
 
         if (isEditMode) await ApiClient.UpdateDisciplineAsync(currentDiscipline);
