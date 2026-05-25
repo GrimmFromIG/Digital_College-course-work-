@@ -1,32 +1,55 @@
-﻿@page "/public"
+@page "/public"
 @inject AuthService AuthService
 
 <PageTitle>Інформація про кафедру</PageTitle>
 
-<div class="container mt-4">
-    <div class="jumbotron shadow-sm p-5 mb-4 bg-light rounded">
-        <h1 class="display-4">Ласкаво просимо!</h1>
-        <p class="lead">Це публічна сторінка нашої кафедри. Тут ви можете знайти загальну інформацію.</p>
-        <hr class="my-4">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Викладачі</h5>
-                        <p class="card-text">Перегляньте список науково-педагогічного складу нашої кафедри.</p>
-                        <a href="public/teachers" class="btn btn-outline-primary">Список викладачів</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Дисципліни</h5>
-                        <p class="card-text">Перелік навчальних предметів, які викладаються на кафедрі.</p>
-                        <a href="public/disciplines" class="btn btn-outline-primary">Список дисциплін</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudPaper Elevation="3" Class="pa-8 mb-6 mud-background-gray rounded-lg">
+        <MudText Typo="Typo.h3" GutterBottom="true" Class="font-weight-bold">Ласкаво просимо!</MudText>
+        <MudText Typo="Typo.h6" Class="text-muted mb-6">
+            Це публічна сторінка нашої кафедри. Тут ви можете знайти загальну інформацію.
+        </MudText>
+
+        <MudDivider Class="my-6" />
+
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="2" Class="d-flex flex-column h-100 rounded-lg">
+                    <MudCardContent Class="flex-grow-1">
+                        <MudText Typo="Typo.h5" Class="mb-2 font-weight-bold" Color="Color.Primary">Викладачі</MudText>
+                        <MudText Typo="Typo.body1" Class="text-secondary">
+                            Перегляньте список науково-педагогічного складу нашої кафедри.
+                        </MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Href="/public/teachers"
+                                   Class="ml-2 mb-2">
+                            Список викладачів
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="2" Class="d-flex flex-column h-100 rounded-lg">
+                    <MudCardContent Class="flex-grow-1">
+                        <MudText Typo="Typo.h5" Class="mb-2 font-weight-bold" Color="Color.Primary">Дисципліни</MudText>
+                        <MudText Typo="Typo.body1" Class="text-secondary">
+                            Перелік навчальних предметів, які викладаються на кафедрі.
+                        </MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Href="/public/disciplines"
+                                   Class="ml-2 mb-2">
+                            Список дисциплін
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</MudContainer>
