@@ -1,0 +1,34 @@
+@page "/public/disciplines"
+@inject ApiClient ApiClient
+
+<PageTitle>Дисципліни</PageTitle>
+<MudText Typo="Typo.h4" Class="mb-4">Дисципліни кафедри</MudText>
+
+<div class="d-flex flex-wrap gap-3 mb-4 align-center">
+    <MudTextField @bind-Value="SearchTerm" Placeholder="Пошук..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1" />
+    <MudSelect T="string" @bind-Value="SortBy" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 150px;">
+        <MudSelectItem Value="@("name_asc")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplySearch" Class="px-6">Знайти</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearSearch">Очистити</MudButton>
+</div>
+
+<MudTable Items="@disciplines" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="3">
+    <HeaderContent><MudTh>Назва</MudTh><MudTh>Викладач</MudTh></HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Назва">@context.Name</MudTd>
+        <MudTd DataLabel="Викладач">@context.TeacherName</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<DisciplineModel> disciplines;
+    private string SearchTerm = "";
+    private string SortBy = "name_asc";
+
+    protected override async Task OnInitializedAsync() => await LoadDisciplines();
+    private async Task ApplySearch() => await LoadDisciplines();
+    private async Task ClearSearch() { SearchTerm = ""; SortBy = "name_asc"; await LoadDisciplines(); }
+    private async Task LoadDisciplines() { disciplines = await ApiClient.GetDisciplinesAsync(SearchTerm, SortBy); }
+}

@@ -1,0 +1,53 @@
+@page "/"
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<PageTitle>Головна - Е-Кафедра</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    @if (!AuthService.IsAuthenticated)
+    {
+        <div class="text-center">
+            <MudText Typo="Typo.h2" Color="Color.Primary" Class="mb-4 font-weight-bold">Електронна Кафедра</MudText>
+            <MudText Typo="Typo.h6" Class="text-muted mb-8">
+                Для доступу до функцій керування та оцінювання, будь ласка, авторизуйтесь.
+            </MudText>
+
+            <div class="d-flex justify-center gap-4 mt-4">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           Class="px-8 py-2"
+                           OnClick='() => NavManager.NavigateTo("login")'>
+                    Увійти
+                </MudButton>
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Default"
+                           Size="Size.Large"
+                           Class="px-6 py-2"
+                           OnClick='() => NavManager.NavigateTo("public")'>
+                    Продовжити як гість
+                </MudButton>
+            </div>
+        </div>
+    }
+    else
+    {
+        <MudCard Elevation="4" Class="pa-6 rounded-lg text-center mt-10">
+            <MudCardContent>
+                <MudText Typo="Typo.h4" Class="mb-6 font-weight-bold">
+                    Вітаємо, @AuthService.CurrentUser.FullName!
+                </MudText>
+
+                <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Elevation="2" Class="mb-6 justify-center">
+                    Ваша роль у системі: <strong>@AuthService.CurrentUser.Role</strong>
+                </MudAlert>
+
+                <MudText Typo="Typo.body1" Color="Color.Secondary">
+                    Використовуйте бокову панель для навігації між розділами.
+                </MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+</MudContainer>

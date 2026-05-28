@@ -1,0 +1,103 @@
+@page "/login"
+@inject AuthService AuthService
+@inject ApiClient ApiClient
+@inject NavigationManager NavManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Вхід у систему</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudCard Elevation="4" Class="rounded-lg">
+        <MudCardHeader Class="mud-theme-primary rounded-t-lg py-4">
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5" Class="font-weight-bold text-white align-center d-flex justify-center">
+                    <MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-2" /> Авторизація
+                </MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+
+        <MudCardContent Class="pa-6">
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+
+                <MudTextField @bind-Value="loginModel.Email" Label="Електронна пошта" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-4" For="@(() => loginModel.Email)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+                <MudTextField @bind-Value="loginModel.Password" Label="Пароль" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-6" InputType="InputType.Password" For="@(() => loginModel.Password)" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Key" />
+
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth="true" Class="mb-3 font-weight-bold">
+                    Увійти в систему
+                </MudButton>
+
+                <MudButton Variant="Variant.Text" Color="Color.Default" FullWidth="true" OnClick="LoginAsGuest">
+                    Продовжити як Гість
+                </MudButton>
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
+
+    @if (testAccounts != null && testAccounts.Any())
+    {
+        <MudAlert Severity="Severity.Info" Class="mt-6">
+            <MudText Typo="Typo.subtitle2" Class="font-weight-bold mb-2">Акаунти для тестування (ПІБ / Email / Пароль):</MudText>
+            <ul style="margin-bottom: 0; padding-left: 20px;">
+                @foreach (var acc in testAccounts)
+                {
+                    <li class="mb-1">
+                        <MudChip T="string" Size="Size.Small" Color="Color.Primary" Class="mr-1">@TranslateRole(acc.Role)</MudChip>
+                        <b>@acc.FullName</b> : @acc.Email / <b>@acc.Password</b>
+                    </li>
+                }
+            </ul>
+        </MudAlert>
+    }
+</MudContainer>
+
+@code {
+    private LoginRequest loginModel = new();
+    private List<TestAccountModel> testAccounts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        testAccounts = await ApiClient.GetTestAccountsAsync();
+    }
+
+    private async Task HandleLogin()
+    {
+        bool isSuccess = await AuthService.LoginWithCredentialsAsync(loginModel.Email, loginModel.Password);
+        if (isSuccess)
+        {
+            Snackbar.Add($"Вітаємо, {AuthService.CurrentUser.FullName}!", Severity.Success);
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            Snackbar.Add("Невірний email або пароль!", Severity.Error);
+        }
+    }
+
+    private async Task LoginAsGuest()
+    {
+        await AuthService.LoginAsGuestAsync();
+        NavManager.NavigateTo("/public");
+    }
+
+    private string TranslateRole(string role)
+    {
+        return role switch
+        {
+            "Manager" => "Менеджер",
+            "Teacher" => "Викладач",
+            "Student" => "Студент",
+            _ => role
+        };
+    }
+
+    public class LoginRequest
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть Email")]
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Некоректний формат пошти")]
+        public string Email { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Введіть пароль")]
+        public string Password { get; set; }
+    }
+}

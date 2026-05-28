@@ -1,0 +1,54 @@
+@page "/public/teachers"
+@inject ApiClient ApiClient
+
+<PageTitle>Наші викладачі</PageTitle>
+<MudText Typo="Typo.h4" Class="mb-4">Наші викладачі</MudText>
+
+<div class="d-flex flex-wrap gap-3 mb-4 align-center">
+    <MudTextField @bind-Value="SearchTerm" Placeholder="ПІБ..." Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1" />
+    <MudSelect T="int?" @bind-Value="FilterDisciplineId" Label="Дисципліна" Variant="Variant.Outlined" Margin="Margin.Dense" Class="flex-grow-1">
+        <MudSelectItem T="int?" Value="null">Усі дисципліни</MudSelectItem>
+        @if (allDisciplines != null)
+        {
+            @foreach(var d in allDisciplines) {
+                <MudSelectItem T="int?" Value="@d.Id">@d.Name</MudSelectItem>
+            }
+        }
+    </MudSelect>
+    <MudSelect T="string" @bind-Value="SortBy" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 150px;">
+        <MudSelectItem Value="@("name_asc")">А - Я</MudSelectItem>
+        <MudSelectItem Value="@("name_desc")">Я - А</MudSelectItem>
+    </MudSelect>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplySearch" Class="px-6">Знайти</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="ClearSearch">Очистити</MudButton>
+</div>
+
+<MudGrid>
+    @if (teachers != null)
+    {
+        @foreach(var teacher in teachers) {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard Elevation="3" Class="h-100 rounded-lg">
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6" Class="font-weight-bold">@teacher.FullName</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Primary" Class="mb-2"><strong>Викладає:</strong> @teacher.Disciplines</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+@code {
+    private List<TeacherModel> teachers;
+    private List<DisciplineModel> allDisciplines;
+    private string SearchTerm = "";
+    private int? FilterDisciplineId = null;
+    private string SortBy = "name_asc";
+
+    protected override async Task OnInitializedAsync() { await LoadDisciplines(); await LoadTeachers(); }
+    private async Task ApplySearch() => await LoadTeachers();
+    private async Task ClearSearch() { SearchTerm = ""; FilterDisciplineId = null; SortBy = "name_asc"; await LoadTeachers(); }
+    private async Task LoadDisciplines() { allDisciplines = await ApiClient.GetDisciplinesAsync(); }
+    private async Task LoadTeachers() { teachers = await ApiClient.GetTeachersAsync(SearchTerm, FilterDisciplineId, SortBy); }
+}
