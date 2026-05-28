@@ -1,0 +1,58 @@
+@implements IDisposable
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<CascadingValue Value="AuthService">
+    @if (isInitializing)
+    {
+        <div class="d-flex justify-center align-center" style="height: 100vh; flex-direction: column; gap: 16px;">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+            <MudText Typo="Typo.body1" Color="Color.Primary">Завантаження системи...</MudText>
+        </div>
+    }
+    else
+    {
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>
+                <PageTitle>Not found</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <p role="alert">Сторінку не знайдено.</p>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    }
+</CascadingValue>
+
+@code {
+    private bool isInitializing = true;
+
+    protected override void OnInitialized()
+    {
+        AuthService.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await AuthService.InitializeAsync();
+            }
+            finally
+            {
+                isInitializing = false;
+                StateHasChanged();
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        AuthService.OnChange -= StateHasChanged;
+    }
+}
